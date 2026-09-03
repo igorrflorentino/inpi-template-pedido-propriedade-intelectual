@@ -1,0 +1,52 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DECLARAÇÃO DAS FIGURAS — fonte única                                %%
+%%                                                                     %%
+%% Este arquivo é lido DUAS VEZES, e a macro \figura se comporta de um  %%
+%% jeito em cada leitura:                                               %%
+%%                                                                     %%
+%%   relatorio-descritivo.tex  gera a listagem exigida pelos arts.       %%
+%%                             26, III e 27, V — "A Figura 1 apresenta  %%
+%%                             <descrição>.";                            %%
+%%   desenhos.tex              posiciona a imagem com o rótulo          %%
+%%                             "Figura N" centralizado abaixo dela.      %%
+%%                                                                     %%
+%% Por isso a numeração e a ordem das figuras são consistentes por      %%
+%% construção: não existem duas listas para manter em sincronia.        %%
+%%                                                                     %%
+%% Sintaxe:                                                             %%
+%%     \figura{<arquivo em figuras/, sem extensão>}{<descrição>}         %%
+%%     \figura[<opções de \includegraphics>]{<arquivo>}{<descrição>}     %%
+%%                                                                     %%
+%% A descrição entra na frase "A Figura N apresenta ...", então escreva-a %%
+%% em minúscula e sem ponto final. Art. 27, V — especifique a           %%
+%% representação gráfica: vista, corte, esquema de circuito, diagrama em %%
+%% bloco, fluxograma, gráfico.                                          %%
+%%                                                                     %%
+%% O argumento opcional controla o tamanho. Sem ele, a figura ocupa a   %%
+%% página inteira; com uma largura menor (ex.: width=0.45\linewidth),   %%
+%% várias figuras cabem na mesma página, como permite o art. 37 — desde %%
+%% que nitidamente separadas umas das outras.                           %%
+%%                                                                     %%
+%% Exigências de conteúdo das figuras (art. 39):                        %%
+%%   I   isentas de texto, admitidos apenas termos indicativos ("corte  %%
+%%       AA", "vapor d'água", "aberto", "fechado") e palavras-chave     %%
+%%       indispensáveis à compreensão;                                   %%
+%%   II  diagramas em bloco e fluxogramas contêm descrições de          %%
+%%       atividades e/ou etapas;                                         %%
+%%   III os termos indicativos não podem cobrir linha alguma da figura; %%
+%%   IV  os sinais de referência identificam o MESMO elemento em todas  %%
+%%       as figuras em que ele apareça;                                  %%
+%%   V   ordenadas, preferencialmente, conforme o relatório descritivo. %%
+%%                                                                     %%
+%% Art. 21 — nada de timbre, logotipo, letreiro, assinatura ou rubrica  %%
+%% nas páginas de desenho.                                              %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\figura{figura-1-vista-em-corte}{a vista em corte longitudinal do dispositivo
+de acionamento (1), com o corpo tubular (2), a membrana elástica (3), a haste
+de acionamento (4), a mola de retorno (5), o atuador eletromecânico (6), o
+sensor de pressão (7), a unidade de controle (8) e o assento de vedação de
+dupla face (9)}
+
+\figura{figura-2-fluxograma}{o fluxograma das etapas do processo de controle de
+vazão executado pela unidade de controle (8)}
