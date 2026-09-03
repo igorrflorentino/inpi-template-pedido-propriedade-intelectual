@@ -1,0 +1,73 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Art. 27, VI — "se necessário, utilizar exemplos e/ou quadros        %%
+%% comparativos, relacionando-os com o estado da técnica".              %%
+%%                                                                     %%
+%% Resultados de teste comparativo costumam ser decisivos para          %%
+%% demonstrar o efeito técnico, e por isso pesam no exame. Se você tem  %%
+%% esses dados, este é o lugar deles.                                   %%
+%%                                                                     %%
+%% TABELAS aqui, FIGURAS nunca:                                         %%
+%%   art. 20 — tabelas, fórmulas ou estruturas químicas e expressões    %%
+%%     matemáticas podem ser inseridas no texto, em preto e            %%
+%%     identificadas de forma sequencial. Use o ambiente 'tabelainpi'   %%
+%%     (numera e rotula sozinho) e o ambiente 'equation' para           %%
+%%     expressões matemáticas;                                          %%
+%%   art. 19 — representações gráficas (figuras, fotografias,          %%
+%%     fluxogramas, gráficos) NÃO são aceitas no relatório descritivo.  %%
+%%     Elas vão exclusivamente no documento de desenhos.                %%
+%%                                                                     %%
+%% Toda tabela precisa ser comentada no texto — uma tabela solta, sem   %%
+%% parágrafo que a explique, é matéria que o examinador não sabe como   %%
+%% ler.                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\secaoinpi{Exemplos de concretizações \danatureza}
+
+\ifinvencao
+\pnum Em uma concretização preferida, o corpo tubular (2) é obtido por injeção
+de poliamida reforçada com fibra de vidro, a membrana elástica (3) é de
+elastômero de etileno-propileno-dieno e a mola de retorno (5) é de aço inoxidável
+austenítico, com pré-carga de 12 N.
+\else
+\pnum Em uma primeira variação construtiva, o corpo tubular (2) é obtido por
+injeção de poliamida reforçada com fibra de vidro, a membrana elástica (3) é de
+elastômero de etileno-propileno-dieno e a mola de retorno (5) é de aço inoxidável
+austenítico, com pré-carga de 12 N.
+\fi
+
+\pnum O atuador eletromecânico (6) é constituído por um solenoide de bobina
+única, alimentado em 12 V, e o sensor de pressão (7) é do tipo piezorresistivo,
+com faixa de medição de 0 kPa a 600 kPa.
+
+\pnum A energia consumida por ciclo de acionamento é obtida pela integral da
+potência aplicada ao atuador eletromecânico (6) ao longo da duração do pulso,
+conforme a expressão:
+
+\begin{equation}
+    W = \int_{0}^{t_{p}} v(t)\, i(t)\, \mathrm{d}t
+\end{equation}
+
+\pnum Foram realizados ensaios comparativos entre uma concretização do
+dispositivo de acionamento (1) e dois conjuntos representativos do estado da
+técnica, submetidos ao mesmo regime de 40 ciclos diários de irrigação, com
+pressão de linha de 200 kPa. Os resultados estão reunidos na Tabela 1.
+
+\begin{tabelainpi}{Energia consumida por ciclo de acionamento e pressão mínima
+de fechamento}
+    \begin{tabular}{lrr}
+        \toprule
+        Conjunto ensaiado & Energia por ciclo (J) & Pressão mínima (kPa) \\
+        \midrule
+        Acionamento direto (BR 10 2015 000000 0)      & 216{,}0 & 0   \\
+        Acionamento hidráulico (US 2018/0123456 A1)   & 4{,}8   & 120 \\
+        Dispositivo de acionamento (1)                & 1{,}9   & 0   \\
+        \bottomrule
+    \end{tabular}
+\end{tabelainpi}
+
+\pnum Os valores reunidos na Tabela 1 mostram que o dispositivo de acionamento
+(1) consumiu 1,9 J por ciclo, contra 216,0 J do conjunto de acionamento direto
+e 4,8 J do conjunto de acionamento hidráulico assistido. O conjunto de
+acionamento hidráulico assistido deixou de completar o fechamento com pressão
+de linha inferior a 120 kPa, enquanto o dispositivo de acionamento (1) completou
+o fechamento em todos os ensaios, inclusive com a linha despressurizada.

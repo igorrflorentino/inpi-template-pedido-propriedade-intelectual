@@ -1,0 +1,27 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DESENHOS — gera desenhos.pdf                                        %%
+%%                                                                     %%
+%% Peça do art. 3º, IV: obrigatória em modelo de utilidade (art. 22) e  %%
+%% opcional em invenção. Composto APENAS por figuras (art. 37) — é o    %%
+%% único documento do pedido onde pode haver representação gráfica, já  %%
+%% que o art. 19 as proíbe no relatório, nas reivindicações e no resumo.%%
+%%                                                                     %%
+%% As figuras são declaradas UMA VEZ em pedido/desenhos/figuras.tex e   %%
+%% lidas também pelo relatório descritivo, que gera a listagem exigida  %%
+%% pelos arts. 26, III e 27, V.                                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,12pt]{article}
+\usepackage{lib/inpitex}
+\input{dados-do-pedido}
+
+\begin{document}
+
+% Art. 38, I — aplica a geometria própria deste documento: margem superior
+% entre 2,5 cm e 4 cm, esquerda e direita entre 1,5 cm e 2,5 cm, inferior de
+% pelo menos 1 cm.
+\abrirdesenhos
+
+\imprimirdesenhos
+
+\end{document}

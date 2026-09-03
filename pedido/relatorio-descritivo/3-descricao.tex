@@ -1,0 +1,85 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Art. 27, VI — descrever de forma precisa, clara e suficiente, de     %%
+%% maneira que um técnico no assunto possa realizá-la, fazendo remissão %%
+%% aos sinais de referência constantes dos desenhos.                    %%
+%%                                                                     %%
+%% Esta é a maior seção do relatório descritivo. Vale o art. 24 da LPI: %%
+%% tudo o que for necessário para que alguém reproduza o objeto precisa %%
+%% estar AQUI. O examinador avalia a suficiência descritiva por este    %%
+%% texto (Resolução INPI/PR nº 124/2013, itens 2.13 a 2.16).            %%
+%%                                                                     %%
+%% Sinais de referência: sempre que citar um elemento do desenho, cite  %%
+%% o sinal entre parênteses — "a haste de acionamento (4) desloca o     %%
+%% assento (9)". Os mesmos sinais devem identificar o mesmo elemento em %%
+%% todas as figuras (art. 39, IV) e ser uniformes em todo o pedido      %%
+%% (art. 23, IV).                                                       %%
+%%                                                                     %%
+%% Unidade do objeto:                                                   %%
+%%   invenção — um único conceito inventivo (art. 22 da LPI). Motor novo %%
+%%     e sistema de freios novo resolvem problemas técnicos diferentes: %%
+%%     são dois pedidos.                                                %%
+%%   modelo de utilidade — uma única unidade técnico-funcional e corporal%%
+%%     (art. 23 da LPI). Mesa nova e cadeira nova são dois corpos com   %%
+%%     funções distintas: são dois pedidos.                             %%
+%%                                                                     %%
+%% Atenção (art. 27, VII): em modelo de utilidade NÃO cabem trechos do  %%
+%% tipo "concretização preferida" ou "a título exemplificativo" — o     %%
+%% texto deve definir o objeto requerido e suas variantes, não um       %%
+%% princípio que admita formas diversas.                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\secaoinpi{Descrição \danatureza}
+
+\pnum O dispositivo de acionamento (1) compreende um corpo tubular (2), provido
+de bocal de entrada e de bocal de saída, no interior do qual se aloja uma
+membrana elástica (3) solidária a uma haste de acionamento (4).
+
+\pnum A haste de acionamento (4) apresenta, em sua porção intermediária, um
+ressalto de encosto que atua sobre uma mola de retorno (5) pré-carregada,
+apoiada contra a face interna do corpo tubular (2). Na extremidade oposta à
+membrana elástica (3), a haste de acionamento (4) recebe um assento de vedação
+de dupla face (9), que veda alternadamente o bocal de saída e um orifício de
+alívio do corpo tubular (2).
+
+\pnum Um atuador eletromecânico (6) acopla-se à haste de acionamento (4) e
+promove o deslocamento desta entre duas posições extremas. A pré-carga da mola
+de retorno (5) é dimensionada de modo que, ultrapassado o ponto de inversão
+definido pelo ressalto de encosto, a mola de retorno (5) conduza a haste de
+acionamento (4) até a posição extrema seguinte e a mantenha nessa posição sem
+alimentação do atuador eletromecânico (6).
+
+\pnum Um sensor de pressão (7), montado no bocal de saída do corpo tubular (2),
+fornece o sinal de pressão de linha a uma unidade de controle (8), que comanda
+o atuador eletromecânico (6) por meio de pulsos de corrente de duração
+determinada\incluido{, inferior ao tempo de resposta do assento de vedação de
+dupla face (9)}.
+
+% Exemplo de supressão de parágrafo inteiro: no documento do pedido não imprime
+% nada e não consome número, mantendo contínua a numeração do art. 26, II; na
+% cópia de comparação sai tachado, com [--] no lugar do número.
+\paragraforemovido{A unidade de controle (8) pode ainda ser substituída por um
+temporizador mecânico, dispensando o sensor de pressão (7).}
+
+\pnum No estado de abertura, o assento de vedação de dupla face (9) mantém
+vedado o orifício de alívio e liberado o bocal de saída, e a água escoa da
+entrada para a saída do corpo tubular (2). No estado de fechamento, o assento
+de vedação de dupla face (9) mantém vedado o bocal de saída e liberado o
+orifício de alívio, o que despressuriza a câmara sob a membrana elástica (3) e
+consolida o fechamento.
+
+\pnum A transição entre os dois estados ocorre exclusivamente durante o pulso
+de corrente aplicado ao atuador eletromecânico (6), cuja duração é inferior a
+duzentos milissegundos, de modo que o consumo de energia por ciclo de
+acionamento se reduz à energia do pulso.
+
+\pnum O processo de controle de vazão executado pela unidade de controle (8)
+compreende as etapas de: leitura do sinal de pressão fornecido pelo sensor de
+pressão (7); comparação do valor lido com uma faixa de operação previamente
+definida; e aplicação de um pulso de corrente ao atuador eletromecânico (6)
+quando o valor lido permanecer fora da faixa de operação por intervalo superior
+a um tempo de confirmação.
+
+\pnum A etapa de comparação emprega uma faixa de operação delimitada por um
+limite inferior e um limite superior de pressão, e o tempo de confirmação
+impede que oscilações transitórias da linha provoquem acionamentos
+desnecessários.

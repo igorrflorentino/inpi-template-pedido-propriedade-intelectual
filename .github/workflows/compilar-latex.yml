@@ -1,25 +1,21 @@
 name: Compilar LaTeX
 
-# Compila o documento (main.tex) automaticamente a cada Pull Request e a cada
-# push na branch main, garantindo que a ficha catalográfica e o restante do
-# relatório sempre compilem antes do merge. O PDF gerado fica disponível como
-# artefato do build.
+# Compila as QUATRO peças do pedido de patente a cada Pull Request e a cada push
+# na branch main, e publica os PDFs como artefato do build.
 #
-# Além do main.tex, compila os exemplos de demonstração (exemplo-academico,
-# exemplo-publicacao, exemplo-corporativo e exemplo-probatorio) e os publica como
-# artefato "exemplos-pdf" — assim é possível ver cada tipo de documento sem
-# compilar nada localmente.
+# O art. 16 da Portaria/INPI/DIRPA nº 14/2024 exige que relatório descritivo,
+# reivindicações, desenhos e resumo sejam documentos separados, com numeração de
+# páginas independente. Por isso são quatro raízes LaTeX e quatro PDFs — que são
+# exatamente os arquivos anexados no Peticionamento Eletrônico do INPI.
 #
 # O workflow também: (a) roda o chktex como lint advisory dos arquivos de prosa
-# (não bloqueia o build) e (b) executa verificar-ocultamento.sh como rede de
-# REGRESSÃO da exibição automática de elementos opcionais (este BLOQUEIA o build
-# se algum elemento passar a aparecer/sumir indevidamente).
+# (não bloqueia o build) e (b) gera o showcase dos dois eixos de seleção.
 #
-# CONTEXTO (importante para quem USA o template): os passos só-do-template — a
-# rede de regressão e o showcase de exemplos — rodam APENAS neste repositório,
-# via guarda `if: github.repository == '<repo do template>'`. Em documentos
-# DERIVADOS do template, esses passos são pulados automaticamente; o usuário vê
-# só lint + compilar o seu main.tex + publicar o PDF, sem atrito.
+# CONTEXTO (importante para quem USA o template): o passo só-do-template — o
+# showcase de exemplos — roda APENAS neste repositório, via guarda
+# `if: github.repository == '<repo do template>'`. Em pedidos DERIVADOS do
+# template esse passo é pulado automaticamente; quem está escrevendo um pedido
+# real vê só lint + compilação das suas quatro peças + publicação dos PDFs.
 
 on:
   push:
@@ -38,68 +34,98 @@ concurrency:
 
 jobs:
   compilar:
-    name: Compilar main.tex
+    name: Compilar as peças do pedido
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v6
 
-      # Ferramentas usadas pelos passos de lint e de verificação (rodam no host,
-      # fora do contêiner TeX Live): chktex (análise estática) e poppler-utils
-      # (pdftotext, para extrair texto do PDF na rede de regressão).
-      - name: Instalar ferramentas (lint + verificação)
+      # Ferramentas usadas pelos passos de lint e de conformidade (rodam no
+      # host, fora do contêiner TeX Live): chktex (análise estática da prosa) e
+      # poppler-utils (pdftotext/pdfimages/pdfinfo, para inspecionar os PDFs).
+      - name: Instalar ferramentas (lint + conformidade)
         run: sudo apt-get update -qq && sudo apt-get install -y -qq chktex poppler-utils
 
-      # Lint ADVISORY: aponta problemas de prosa (ex.: falta de ~ antes de
-      # citação) sem bloquear o build. As mesmas supressões do `make lint`.
+      # Lint ADVISORY: aponta problemas de prosa sem bloquear o build.
+      # As mesmas supressões do `make lint`.
       - name: Lint (chktex, advisory)
         continue-on-error: true
-        run: chktex -q -n1 -n8 -n12 -n24 -n36 -n38 -n44 elementos-textuais/*.tex elementos-pre-textuais/*.tex
+        run: chktex -q -n1 -n8 -n12 -n24 -n36 -n44 pedido/*/*.tex dados-do-pedido.tex
 
-      # Roda latexmk dentro de uma imagem TeX Live completa (inclui abntex2,
-      # glossaries, makeglossaries, makeindex etc.). O .latexmkrc do repositório
-      # é respeitado, então o glossário e a lista de siglas são gerados.
-      - name: Compilar com latexmk
-        uses: xu-cheng/latex-action@v3
-        with:
-          root_file: main.tex
-
-      - name: Publicar PDF como artefato
-        uses: actions/upload-artifact@v7
-        with:
-          name: main-pdf
-          path: main.pdf
-          if-no-files-found: error
-
-      # Rede de REGRESSÃO (SÓ-DO-TEMPLATE, bloqueante): confere que cada elemento
-      # opcional apareceu/sumiu como esperado PARA O CONTEÚDO-EXEMPLO PADRÃO. Por
-      # ser calibrada ao conteúdo do template, roda só neste repo — em documentos
-      # derivados (outro github.repository) é pulada, p/ não travar o build real.
-      - name: Verificar ocultamento de elementos (regressão)
-        if: github.repository == 'igorrflorentino/embrapa-template-documentos-latex-abnt'
-        run: bash verificar-ocultamento.sh --check-only
-
-      # Showcase (SÓ-DO-TEMPLATE): gera uma amostra de cada tipo de documento,
-      # reaproveitando o conteúdo do main.tex (os drivers exemplo-*.tex apenas
-      # injetam o tipo). Pulado em documentos derivados. Veja gerar-exemplos.sh.
-      - name: Compilar exemplos (academico, publicacao, corporativo e probatorio)
-        if: github.repository == 'igorrflorentino/embrapa-template-documentos-latex-abnt'
+      # Compila as quatro raízes numa imagem TeX Live completa. Os argumentos
+      # padrão da ação já incluem -halt-on-error, então um erro grave derruba o
+      # build em vez de gerar um PDF com erro silencioso.
+      - name: Compilar as quatro peças com latexmk
         uses: xu-cheng/latex-action@v3
         with:
           root_file: |
-            exemplo-academico.tex
-            exemplo-publicacao.tex
-            exemplo-corporativo.tex
-            exemplo-probatorio.tex
+            relatorio-descritivo.tex
+            reivindicacoes.tex
+            desenhos.tex
+            resumo.tex
 
-      - name: Publicar exemplos como artefato
-        if: github.repository == 'igorrflorentino/embrapa-template-documentos-latex-abnt'
+      - name: Publicar as peças do pedido como artefato
+        uses: actions/upload-artifact@v7
+        with:
+          name: pedido-de-patente-pdf
+          path: |
+            relatorio-descritivo.pdf
+            reivindicacoes.pdf
+            desenhos.pdf
+            resumo.pdf
+          if-no-files-found: error
+
+      # Rede de CONFORMIDADE (BLOQUEANTE): afirma sobre os PDFs recém-gerados
+      # cada exigência de forma da Portaria/INPI/DIRPA nº 14/2024 que é
+      # verificável automaticamente — paginação n/N por peça (art. 16), 20 a 35
+      # linhas por página (art. 17), ausência de representação gráfica fora dos
+      # desenhos (art. 19), título idêntico no relatório e no resumo (art. 24),
+      # numeração sequencial dos parágrafos (art. 26), congruência das figuras
+      # (arts. 26, III e 39, V), forma das reivindicações (art. 28) e limite de
+      # uma página do resumo (art. 40).
+      #
+      # Diferente da antiga rede de regressão, esta NÃO é só-do-template: ela
+      # verifica a norma, não o conteúdo-exemplo, e por isso vale também para os
+      # pedidos escritos a partir do template. --check-only usa os PDFs que o
+      # passo anterior gerou, sem recompilar.
+      - name: Verificar conformidade normativa
+        run: bash verificar-conformidade.sh --check-only
+
+      # Showcase (SÓ-DO-TEMPLATE): gera as quatro peças para cada combinação dos
+      # dois eixos de seleção (natureza e modalidade), provando que os seletores
+      # de dados-do-pedido.tex realmente chaveiam o que deveriam. Pulado em
+      # pedidos derivados do template. Veja gerar-exemplos.sh.
+      # O script injeta valores por -pretex, o que a ação latex-action não sabe
+      # expressar; rodamos o script na mesma imagem TeX Live, diretamente.
+      - name: Gerar o showcase dos eixos de seleção
+        if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
+        run: |
+          docker run --rm -v "$PWD:/work" -w /work \
+            texlive/texlive:latest bash gerar-exemplos.sh
+
+      - name: Publicar o showcase como artefato
+        if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
         uses: actions/upload-artifact@v7
         with:
           name: exemplos-pdf
-          path: |
-            exemplo-academico.pdf
-            exemplo-publicacao.pdf
-            exemplo-corporativo.pdf
-            exemplo-probatorio.pdf
+          path: exemplo-*.pdf
+          if-no-files-found: error
+
+      # Cópia de comparação (SÓ-DO-TEMPLATE): prova que a mesma fonte gera as
+      # duas saídas exigidas pelo art. 57 — os documentos do pedido sem
+      # sinalização (inciso I, já compilados acima) e a cópia com tachado e
+      # sublinhado (inciso II). O conteúdo-exemplo traz marcações de propósito,
+      # para que as duas saídas realmente difiram.
+      - name: Gerar a cópia de comparação
+        if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
+        run: |
+          docker run --rm -v "$PWD:/work" -w /work \
+            texlive/texlive:latest bash gerar-copia-de-comparacao.sh
+
+      - name: Publicar a cópia de comparação como artefato
+        if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
+        uses: actions/upload-artifact@v7
+        with:
+          name: copia-de-comparacao-pdf
+          path: '*-comparacao.pdf'
           if-no-files-found: error

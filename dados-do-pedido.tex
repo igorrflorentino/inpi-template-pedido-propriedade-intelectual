@@ -1,0 +1,138 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DADOS DO PEDIDO — o único arquivo de metadados do template.         %%
+%%                                                                     %%
+%% Lido pelas quatro raízes (relatorio-descritivo.tex,                 %%
+%% reivindicacoes.tex, desenhos.tex e resumo.tex), de modo que o        %%
+%% título seja necessariamente o mesmo no relatório descritivo e no     %%
+%% resumo — como exige o art. 24, IV da Portaria/INPI/DIRPA nº 14/2024. %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 1. TÍTULO DO PEDIDO
+%%
+%% Art. 24 — o título deve:
+%%   I   ser conciso, claro e específico, identificando o objeto do pedido,
+%%       não podendo exceder 500 caracteres;
+%%   II  não conter denominações de fantasia;
+%%   III não conter fórmulas químicas ou matemáticas;
+%%   IV  ser o mesmo no relatório descritivo e no resumo.
+%% Art. 25 — deve representar adequadamente as diferentes categorias de
+%%       reivindicação (se você reivindica produto E processo, o título
+%%       precisa refletir os dois).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Os \providecommand permitem que o showcase (./gerar-exemplos.sh) injete
+% outros valores por linha de comando, sem duplicar nenhum arquivo. Na
+% compilação normal valem os valores definidos aqui — é aqui que você edita.
+\providecommand{\TituloDoPedido}{DISPOSITIVO DE ACIONAMENTO PARA VÁLVULA DE
+IRRIGAÇÃO E PROCESSO DE CONTROLE DE VAZÃO}
+\titulodopedido{\TituloDoPedido}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 2. NATUREZA DA PROTEÇÃO
+%%
+%%   invencao             — patente de invenção. Reivindicações conforme os
+%%                          arts. 29 a 31; desenhos opcionais.
+%%   modelo-de-utilidade  — patente de modelo de utilidade. UMA ÚNICA
+%%                          reivindicação independente (art. 33), dependentes
+%%                          só nas hipóteses do art. 35, e desenhos
+%%                          OBRIGATÓRIOS (art. 22).
+%%
+%% Se você não sabe qual é o seu caso: invenção é uma solução técnica nova
+%% para um problema técnico (art. 8º da LPI); modelo de utilidade é um objeto
+%% de uso prático, ou parte dele, com nova forma ou disposição que resulte em
+%% melhoria funcional no seu uso ou fabricação (art. 9º da LPI).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\providecommand{\NaturezaDoPedido}{invencao}
+\natureza{\NaturezaDoPedido}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 3. MODALIDADE DO DEPÓSITO
+%%
+%%   originario         — depósito comum. Nada é impresso após o título.
+%%   adicao             — certificado de adição de invenção. Imprime, após o
+%%                        título, "Certificado de adição de invenção do ___"
+%%                        (art. 43, II). Só existe para natureza 'invencao'
+%%                        (arts. 42 e 43) e exige \pedidovinculado.
+%%   divisao            — pedido dividido. Imprime, após o título,
+%%                        "Dividido do ___" (art. 51, II). Exige
+%%                        \pedidovinculado.
+%%   fase-nacional-pct  — entrada na fase nacional de pedido internacional
+%%                        (Portaria INPI nº 39/2021). A forma dos documentos é
+%%                        a mesma desta norma (art. 65); os dados do pedido
+%%                        internacional vão no requerimento eletrônico, não
+%%                        nos documentos.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\providecommand{\ModalidadeDoPedido}{originario}
+\modalidade{\ModalidadeDoPedido}
+
+% Número do pedido ou da patente a que este documento se vincula. Obrigatório
+% nas modalidades 'adicao' e 'divisao'; ignorado nas demais.
+% Exemplo: \pedidovinculado{BR 10 2024 000000 0}
+\providecommand{\PedidoVinculado}{}
+\pedidovinculado{\PedidoVinculado}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 4. FORMATO DO RÓTULO DOS PARÁGRAFOS
+%%
+%% Art. 26, II — cada parágrafo do relatório descritivo recebe numeração
+%% sequencial em algarismos arábicos à esquerda do texto. A norma exemplifica
+%% com três dígitos ([003], [015]); os formulários oficiais do e-Patentes usam
+%% um dígito ([1], [2]). As duas formas atendem à norma.
+%%
+%%   tres-digitos  — [001], [002], ... (padrão)
+%%   arabico       — [1], [2], ...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\formatorotuloparagrafo{tres-digitos}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 5. CÓPIA DE COMPARAÇÃO (arts. 51, III e 57, II)
+%%
+%% Ao apresentar modificação depois do depósito, ou ao depositar pedido
+%% dividido, a norma pede dois documentos tirados da MESMA matéria: os
+%% documentos modificados "sem qualquer tipo de rasura ou sinalização"
+%% (art. 57, I) e uma cópia de comparação com tachado indicando remoção e
+%% sublinhado indicando inclusão ou substituição (art. 57, II).
+%%
+%% Marque as alterações no texto com \removido{...}, \incluido{...} e
+%% \substituido{...}{...} (e, para blocos inteiros, \paragraforemovido e
+%% \reivindicacaoremovida). O mesmo arquivo gera as duas saídas.
+%%
+%% NÃO mexa no valor abaixo. Para gerar a cópia de comparação use
+%%
+%%     make comparacao        (ou ./gerar-copia-de-comparacao.sh)
+%%
+%% que produz os PDFs *-comparacao.pdf sem tocar neste arquivo. Deixar 'sim'
+%% aqui faria os PDFs do pedido saírem marcados, contrariando o art. 57, I —
+%% e por isso o `make verificar` recusa compilar assim.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\providecommand{\CopiaDeComparacao}{nao}
+\copiadecomparacao{\CopiaDeComparacao}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 6. DADOS DO DEPÓSITO — NÃO SÃO IMPRESSOS EM NENHUM DOCUMENTO
+%%
+%% Guarde-os aqui para ter tudo em um lugar só, mas saiba que eles NÃO vão
+%% para os PDFs: são preenchidos no formulário eletrônico de requerimento do
+%% Peticionamento Eletrônico do INPI (art. 3º, I).
+%%
+%% O art. 21 proíbe, nos documentos do pedido, "timbres, logotipos, letreiros,
+%% assinaturas ou rubricas, sinais ou indicações de qualquer natureza
+%% estranhos à matéria do pedido". Nome de depositante, logotipo institucional,
+%% endereço e assinatura, portanto, NÃO podem aparecer no relatório
+%% descritivo, nas reivindicações, nos desenhos ou no resumo.
+%%
+%%   Depositante(s) ......... Empresa Brasileira de Pesquisa Agropecuária
+%%   CNPJ ................... 00.348.003/0001-10
+%%   Inventor(es) ........... (nomes completos, na ordem do requerimento)
+%%   Procurador ............. (se houver; art. 59)
+%%   Prioridade unionista ... (país, número e data do primeiro depósito; art. 12)
+%%   Prioridade interna ..... (número e data do pedido anterior; art. 15)
+%%   Período de graça ....... (forma, local e data da divulgação; art. 11)
+%%   Código de serviço/GRU .. (natureza do pedido, paga até a apresentação)
+%%   Figura que melhor representa o pedido ... Figura 1 (art. 37, § único)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

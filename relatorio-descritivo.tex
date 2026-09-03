@@ -1,0 +1,51 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% RELATÓRIO DESCRITIVO — gera relatorio-descritivo.pdf                %%
+%%                                                                     %%
+%% Uma das quatro peças do pedido de patente (art. 3º, II da            %%
+%% Portaria/INPI/DIRPA nº 14/2024). Cada peça é um documento SEPARADO,  %%
+%% com numeração de páginas independente (art. 16, I), e é anexada como %%
+%% arquivo próprio no Peticionamento Eletrônico.                        %%
+%%                                                                     %%
+%% Este arquivo é só orquestração: a ordem das seções segue os incisos  %%
+%% do art. 27. O texto vai nos arquivos de pedido/relatorio-descritivo/.%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,12pt]{article}
+\usepackage{lib/inpitex}
+\input{dados-do-pedido}
+
+\begin{document}
+
+% Art. 26, I — o título vem apenas na página inicial, centralizado e separado
+% do texto do relatório descritivo em si. Nas modalidades 'adicao' e 'divisao',
+% a menção exigida pelos arts. 43, II e 51, II sai logo abaixo do título.
+\abrirrelatoriodescritivo
+
+% Art. 27, I — precisar o setor técnico.
+\input{pedido/relatorio-descritivo/1-campo-tecnico}
+
+% Art. 27, II a IV — estado da técnica, problema técnico, solução, vantagens,
+% novidade e efeito técnico (invenção) ou melhoria funcional (modelo).
+\input{pedido/relatorio-descritivo/2-fundamentos}
+
+% Arts. 26, III e 27, V — listagem de TODAS as figuras do documento de
+% desenhos. Gerada a partir de pedido/desenhos/figuras.tex, o mesmo arquivo que
+% desenhos.tex usa para posicionar as imagens: numeração e ordem ficam
+% consistentes por construção. Comente a seção inteira se o seu pedido não
+% tiver desenhos (proibido em modelo de utilidade — art. 22).
+\secaoinpi{Breve descrição dos desenhos}
+\imprimirdescricaodosdesenhos
+
+% Art. 27, VI e VII — descrição precisa, clara e suficiente, de maneira que um
+% técnico no assunto possa realizá-la (art. 24 da LPI).
+\input{pedido/relatorio-descritivo/3-descricao}
+
+% Art. 27, VI — exemplos e/ou quadros comparativos. É aqui que entram as
+% tabelas (art. 20); figuras, nunca (art. 19).
+\input{pedido/relatorio-descritivo/4-concretizacoes}
+
+% Art. 27, VIII — aplicação industrial, quando não for evidente a partir da
+% descrição. Esvazie o arquivo se for evidente no seu caso.
+\input{pedido/relatorio-descritivo/5-aplicacao-industrial}
+
+\end{document}

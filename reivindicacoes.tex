@@ -1,0 +1,22 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% REIVINDICAÇÕES — gera reivindicacoes.pdf                            %%
+%%                                                                     %%
+%% Peça do art. 3º, III. Documento separado, com numeração de páginas   %%
+%% independente (art. 16, I) e identificado pelo termo "Reivindicações" %%
+%% centralizado no topo da primeira página (art. 18).                   %%
+%%                                                                     %%
+%% É o quadro reivindicatório que define o que você quer proteger — o   %%
+%% relatório descritivo apenas o fundamenta (arts. 24 e 25 da LPI).     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,12pt]{article}
+\usepackage{lib/inpitex}
+\input{dados-do-pedido}
+
+\begin{document}
+
+\abrirreivindicacoes
+
+\input{pedido/reivindicacoes/reivindicacoes}
+
+\end{document}
