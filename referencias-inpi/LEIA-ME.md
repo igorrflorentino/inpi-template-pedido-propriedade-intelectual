@@ -17,6 +17,7 @@ desconfie e confira contra a Portaria 14/2024 antes de aplicar.
 | `Resolucao INPI-PR 124-2013` | Diretrizes de exame — conteúdo do pedido. Orienta a redação (suficiência descritiva, formulação de reivindicações, terminologia); alimenta os comentários-guia dos arquivos de `pedido/`. |
 | `Portaria INPI 39-2021` | Entrada na fase nacional de pedidos internacionais (PCT). A forma dos documentos é a mesma da Portaria 14/2024 (art. 65 dela, e art. 9º, § 1º desta). |
 | `Portaria INPI 79-2022` | Trâmite prioritário. Procedimental — **não afeta** a forma dos documentos. |
+| `Portaria INPI-PR 48-2022` | Listagem de sequências. É o "normativo vigente" a que o art. 3º, V da Portaria 14/2024 remete. Manda o padrão OMPI ST.26 em arquivo XML único para depósitos a partir de 01/07/2022 (art. 4º), e é dela a regra de forma do PDF opcional (art. 9º). |
 
 Quando este repositório cita um artigo sem indicar a norma, trata-se da
 Portaria/INPI/DIRPA nº 14/2024. "LPI" é a Lei de Propriedade Industrial
@@ -41,6 +42,21 @@ Vale notar que os formulários numeram os parágrafos com um dígito (`[1]`),
 enquanto o art. 26, II exemplifica com três (`[003]`). As duas formas atendem à
 norma; o template adota três dígitos por padrão e permite trocar em
 `dados-do-pedido.tex`.
+
+## Uma nota sobre a listagem de sequências
+
+A Portaria 48/2022 é de junho de 2022 e a Portaria 14/2024 remete a ela sem
+nomeá-la ("conforme normativo vigente"). Antes de depositar um pedido com
+sequências, **confirme no site do INPI** que ela segue vigente e que as regras do
+padrão ST.26 lá publicadas não mudaram — o art. 4º remete a "regras constantes
+no sítio do INPI na internet", que não são um documento fechado como esta pasta.
+
+Os dois regimes anteriores — a Resolução INPI nº 187/2017 (que ainda exigia CD
+ou DVD) e as regras do padrão ST.25 — **não estão aqui**, pela mesma razão que
+as IN 30/2013 e 31/2013 não estão. Vale uma ressalva: o art. 5º da Portaria 48
+mantém o ST.25 para pedidos depositados **até 30/06/2022**, em caso de nova
+apresentação. Se você acompanha processos antigos, guarde essas regras nos seus
+arquivos — mas fora deste repositório, que serve para iniciar pedidos novos.
 
 ## Ao atualizar esta pasta
 

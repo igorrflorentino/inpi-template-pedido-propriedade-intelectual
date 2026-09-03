@@ -244,6 +244,50 @@ O parágrafo único do art. 57 permite substituir a cópia de comparação por u
 esclarecimento apontando página, trecho e tipo de modificação. Se preferir esse
 caminho, escreva-o em prosa na petição.
 
+### Listagem de sequências (pedidos com sequências biológicas)
+
+Se o objeto do pedido contém **uma ou mais sequências de nucleotídeos e/ou de
+aminoácidos fundamentais para a descrição da invenção**, é obrigatório
+apresentar uma Listagem de sequências, que complementa o relatório descritivo e
+serve à aferição da suficiência descritiva do art. 24 da LPI. Rege a matéria a
+**Portaria/INPI/PR nº 48, de 20/06/2022** — é a ela que o art. 3º, V da Portaria
+14/2024 remete ao dizer "conforme normativo vigente".
+
+**O template não gera essa peça, e não deveria.** O artefato obrigatório é um
+**arquivo XML único no padrão OMPI ST.26** (art. 4º), criado, editado e
+verificado com a ferramenta **WIPO Sequence**, da OMPI (art. 4º, parágrafo
+único). O que vale ali é passar na validação do esquema, e isso nenhum gerador
+em LaTeX faz. Anexe o XML pelo Peticionamento Eletrônico; o sistema devolve um
+**código de controle** automaticamente (art. 6º), que depois consta da
+Carta-Patente (art. 10).
+
+O que o template **exige de você nos documentos que ele gera**: ao citar uma
+sequência no relatório descritivo, nas reivindicações ou nos desenhos, refira-a
+pelo identificador precedido de **`SEQ ID NO:`** — por exemplo, "o
+oligonucleotídeo SEQ ID NO: 3". É a mesma disciplina dos sinais de referência
+das figuras. (Essa regra está escrita nas regras do padrão ST.25 publicadas pelo
+INPI, item 2.2; o `SEQ ID NO:` é comum aos dois padrões, mas confirme nas regras
+do ST.26 no site do INPI.)
+
+Quatro pontos que custam caro se passarem batidos:
+
+| | |
+| --- | --- |
+| **O que entra na listagem** | **Todas** as sequências lineares com 4 ou mais L-aminoácidos contínuos e **todas** com 10 ou mais nucleotídeos contínuos — **mesmo as não reivindicadas**, sondas de PCR incluídas (art. 3º, § 2º). Listar só o que foi reivindicado é erro comum. |
+| **Prazo** | No ato do depósito (art. 7º). Se faltar, ainda cabe **até a data do requerimento de exame**, por **petição isenta de retribuição** (art. 7º, § 1º). Depois disso, o INPI formula exigência (art. 7º, § 2º). |
+| **Correção posterior** | Exige novo arquivo **acompanhado do comprovante de retribuição** (art. 8º). A diferença entre os arts. 7º e 8º é dinheiro. |
+| **Depósitos até 30/06/2022** | Em nova apresentação, **mantêm o padrão ST.25** (art. 5º). Não vale para pedidos novos. |
+
+Há ainda um **PDF opcional**: o art. 9º permite apresentar a listagem
+adicionalmente em PDF, como parte integrante do pedido, incluída após o
+relatório descritivo, iniciada em página separada, sob o título "Listagem de
+sequências", com páginas numeradas de forma sequencial e independente, em
+algarismos arábicos, no centro da parte superior, entre 1 e 2 cm do limite da
+página (art. 9º, §§ 1º e 2º). O template não o gera hoje: para não duplicar a
+matéria, esse PDF teria de ser **convertido do XML**, não redigido à parte — do
+contrário as duas versões divergem, que é justamente o risco que o template
+existe para eliminar.
+
 ---
 
 ## O que **não** entra nos documentos
@@ -321,9 +365,10 @@ CI o executa, como passo bloqueante.
 
 ## Fora do escopo
 
-- **Listagem de sequências biológicas** (art. 3º, V). Segue norma própria e o
-  padrão WIPO ST.26, gerada por ferramenta específica (WIPO Sequence), não por
-  LaTeX. Complementa o relatório descritivo e é anexada à parte.
+- **Listagem de sequências biológicas** (art. 3º, V da Portaria 14/2024 e
+  Portaria INPI/PR nº 48/2022). O artefato obrigatório é XML no padrão ST.26,
+  produzido pelo WIPO Sequence. Veja a seção "Listagem de sequências" acima,
+  inclusive o que ela exige dos documentos que este template gera.
 - **Formulário de requerimento, GRU e procuração** (arts. 4º, 7º e 59). São atos
   no sistema de peticionamento.
 - **Outros direitos de propriedade intelectual.** O escopo aqui é patente —
@@ -344,6 +389,7 @@ conteúdo-guia.
 | Resolução INPI/PR nº 124/2013 | Diretrizes de exame — conteúdo do pedido |
 | Portaria INPI nº 39/2021 | Entrada na fase nacional de pedidos PCT |
 | Portaria INPI nº 79/2022 | Trâmite prioritário (procedimental) |
+| Portaria INPI/PR nº 48/2022 | Listagem de sequências — padrão ST.26 |
 
 Só entram aqui normas **em vigor**. Norma revogada ou superada é removida do
 repositório em vez de guardada com ressalva: material desatualizado à mão é
