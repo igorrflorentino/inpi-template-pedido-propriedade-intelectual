@@ -40,10 +40,11 @@ jobs:
       - name: Checkout do repositório
         uses: actions/checkout@v6
 
-      # Ferramenta usada pelo passo de lint (roda no host, fora do contêiner
-      # TeX Live): chktex, análise estática dos arquivos de prosa.
-      - name: Instalar ferramentas (lint)
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq chktex
+      # Ferramentas usadas pelos passos de lint e de conformidade (rodam no
+      # host, fora do contêiner TeX Live): chktex (análise estática da prosa) e
+      # poppler-utils (pdftotext/pdfimages/pdfinfo, para inspecionar os PDFs).
+      - name: Instalar ferramentas (lint + conformidade)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq chktex poppler-utils
 
       # Lint ADVISORY: aponta problemas de prosa sem bloquear o build.
       # As mesmas supressões do `make lint`.
@@ -73,6 +74,22 @@ jobs:
             desenhos.pdf
             resumo.pdf
           if-no-files-found: error
+
+      # Rede de CONFORMIDADE (BLOQUEANTE): afirma sobre os PDFs recém-gerados
+      # cada exigência de forma da Portaria/INPI/DIRPA nº 14/2024 que é
+      # verificável automaticamente — paginação n/N por peça (art. 16), 20 a 35
+      # linhas por página (art. 17), ausência de representação gráfica fora dos
+      # desenhos (art. 19), título idêntico no relatório e no resumo (art. 24),
+      # numeração sequencial dos parágrafos (art. 26), congruência das figuras
+      # (arts. 26, III e 39, V), forma das reivindicações (art. 28) e limite de
+      # uma página do resumo (art. 40).
+      #
+      # Diferente da antiga rede de regressão, esta NÃO é só-do-template: ela
+      # verifica a norma, não o conteúdo-exemplo, e por isso vale também para os
+      # pedidos escritos a partir do template. --check-only usa os PDFs que o
+      # passo anterior gerou, sem recompilar.
+      - name: Verificar conformidade normativa
+        run: bash verificar-conformidade.sh --check-only
 
       # Showcase (SÓ-DO-TEMPLATE): gera as quatro peças para cada combinação dos
       # dois eixos de seleção (natureza e modalidade), provando que os seletores
