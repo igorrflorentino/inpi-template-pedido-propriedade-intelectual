@@ -1,11 +1,16 @@
 {
-  "latex-workshop.latex.rootFile": "main.tex",
+  // As quatro peças do pedido são raízes LaTeX independentes (art. 16 da
+  // Portaria/INPI/DIRPA nº 14/2024), por isso NÃO há um rootFile fixo: o
+  // LaTeX Workshop detecta como raiz todo arquivo com \documentclass, e a
+  // compilação segue o arquivo aberto no editor.
+  "latex-workshop.latex.rootFile": "",
   "latex-workshop.latex.tools": [
     {
       "name": "latexmk",
       "command": "latexmk",
       "args": [
         "-synctex=1",
+        "-halt-on-error",
         "-interaction=nonstopmode",
         "-file-line-error",
         "-pdf",
@@ -22,27 +27,6 @@
         "-file-line-error",
         "%DOC%"
       ]
-    },
-    {
-      "name": "biber",
-      "command": "biber",
-      "args": [
-        "%DOCFILE%"
-      ]
-    },
-    {
-      "name": "makeglossaries",
-      "command": "makeglossaries",
-      "args": [
-        "%DOCFILE%"
-      ]
-    },
-    {
-      "name": "makeindex",
-      "command": "makeindex",
-      "args": [
-        "%DOCFILE%"
-      ]
     }
   ],
   "latex-workshop.latex.recipes": [
@@ -53,17 +37,16 @@
       ]
     },
     {
-      "name": "pdflatex ➞ biber ➞ makeglossaries ➞ pdflatex × 2",
+      // Duas passadas: a paginação n/N depende do \pageref{LastPage}, que só
+      // estabiliza na segunda.
+      "name": "pdflatex × 2",
       "tools": [
-        "pdflatex",
-        "biber",
-        "makeglossaries",
         "pdflatex",
         "pdflatex"
       ]
     },
     {
-      "name": "pdflatex (rápido)",
+      "name": "pdflatex (rápido, paginação desatualizada)",
       "tools": [
         "pdflatex"
       ]

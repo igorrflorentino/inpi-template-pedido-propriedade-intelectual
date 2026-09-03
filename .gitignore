@@ -1,14 +1,17 @@
 # Arquivos gerados automaticamente pela compilação LaTeX.
 # Apenas os arquivos-fonte devem ser versionados.
-# OBS.: ignoramos somente o PDF compilado /main.pdf — PDFs de fonte
-# (ex.: elementos-pre-textuais/folha-aprovacao.pdf e figuras em PDF)
-# continuam versionados normalmente.
+#
+# OBS.: ignoramos os PDFs COMPILADOS das quatro peças do pedido, não todo
+# *.pdf — as figuras em PDF de figuras/ são fonte e continuam versionadas.
 
-# Documento compilado (saída)
-/main.pdf
+# As quatro peças do pedido (saída da compilação)
+/relatorio-descritivo.pdf
+/reivindicacoes.pdf
+/desenhos.pdf
+/resumo.pdf
 
-# PDFs de demonstração gerados por ./gerar-exemplos.sh (os drivers
-# exemplo-*.tex são versionados; apenas os PDFs gerados são ignorados)
+# PDFs de demonstração gerados por ./gerar-exemplos.sh (o script é versionado;
+# apenas os PDFs gerados são ignorados)
 /exemplo-*.pdf
 
 # Auxiliares gerais do LaTeX
@@ -22,37 +25,7 @@
 *.fls
 *.fdb_latexmk
 
-# Listas (figuras, tabelas, quadros, algoritmos, códigos-fonte)
-*.lof
-*.lot
-*.loa
-*.lol
-*.loq
-
-# Bibliografia (biblatex/biber)
-*.bbl
-*.blg
-*.bcf
-*.run.xml
-
-# Glossário e lista de siglas (glossaries / makeglossaries)
-*.acn
-*.acr
-*.alg
-*.glg
-*.glo
-*.gls
-*.glsdefs
-*.ist
-*.xdy
-
-# Índice remissivo (makeindex)
-*.idx
-*.ilg
-*.ind
-
 # --- Arquivos de sistema operacional ---
-# Versionado em Windows e macOS; ignoramos os metadados de cada sistema.
 # macOS
 .DS_Store
 ._*
