@@ -1,0 +1,22 @@
+%% Arquivo de DEMONSTRAÇÃO — não é o documento de trabalho.
+%% Gera uma amostra do template no modo "academico" (tese de doutorado — o nível
+%% mais completo: instituição, programa, área de concentração, linha de pesquisa,
+%% orientador e banca), reaproveitando todo o conteúdo de main.tex (apenas injeta
+%% valores via \def). Compile a partir da RAIZ do repositório:
+%%     latexmk -pdf exemplo-academico.tex
+%% ou rode ./gerar-exemplos.sh para gerar todos os exemplos de uma vez.
+\def\TipoDoc{academico}
+\def\Nivel{tese}
+\def\Instituicao{Universidade Federal de Exemplo}
+\def\ProgramaPesquisa{Ciência da Computação}
+\def\AreaPesquisa{Inteligência Computacional}
+\def\LinhaPesquisa{Aprendizado de Máquina}
+%% Orientador e banca (o main.tex agora é 'publicacao' por padrão e os deixa
+%% vazios; aqui são preenchidos para demonstrar a folha de aprovação acadêmica):
+\def\Orientador{João Orientador Exemplo}
+\def\OrientadorIes{Embrapa Agricultura Digital}
+\def\MembroBancaDois{Ana Avaliadora Exemplo}
+\def\MembroBancaDoisIes{Universidade Federal de Exemplo}
+\def\MembroBancaTres{Carlos Revisor Exemplo}
+\def\MembroBancaTresIes{Embrapa Agricultura Digital}
+\input{main.tex}

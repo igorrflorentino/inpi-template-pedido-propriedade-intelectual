@@ -1,0 +1,68 @@
+# Arquivos gerados automaticamente pela compilação LaTeX.
+# Apenas os arquivos-fonte devem ser versionados.
+# OBS.: ignoramos somente o PDF compilado /main.pdf — PDFs de fonte
+# (ex.: elementos-pre-textuais/folha-aprovacao.pdf e figuras em PDF)
+# continuam versionados normalmente.
+
+# Documento compilado (saída)
+/main.pdf
+
+# PDFs de demonstração gerados por ./gerar-exemplos.sh (os drivers
+# exemplo-*.tex são versionados; apenas os PDFs gerados são ignorados)
+/exemplo-*.pdf
+
+# Auxiliares gerais do LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex
+*.synctex.gz
+*.synctex(busy)
+*.fls
+*.fdb_latexmk
+
+# Listas (figuras, tabelas, quadros, algoritmos, códigos-fonte)
+*.lof
+*.lot
+*.loa
+*.lol
+*.loq
+
+# Bibliografia (biblatex/biber)
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+
+# Glossário e lista de siglas (glossaries / makeglossaries)
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.glsdefs
+*.ist
+*.xdy
+
+# Índice remissivo (makeindex)
+*.idx
+*.ilg
+*.ind
+
+# --- Arquivos de sistema operacional ---
+# Versionado em Windows e macOS; ignoramos os metadados de cada sistema.
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

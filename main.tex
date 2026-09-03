@@ -1,0 +1,383 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Customizações do abnTeX2 (https://www.abntex2.net.br)              %%
+%% para a Empresa Brasileira de Pesquisa Agropecuária (Embrapa)       %%
+%%                                                                    %%
+%% This work may be distributed and/or modified under the             %%
+%% conditions of the LaTeX Project Public License, either version 1.3 %%
+%% of this license or (at your option) any later version.             %%
+%% The latest version of this license is in                           %%
+%%   http://www.latex-project.org/lppl.txt                            %%
+%% and version 1.3 or later is part of all distributions of LaTeX     %%
+%% version 2005/12/01 or later.                                       %%
+%%                                                                    %%
+%% This work has the LPPL maintenance status `maintained'.            %%
+%%                                                                    %%
+%% The Current Maintainer of this work is Igor Lopes                  %%
+%% Contact: igor.lopes@embrapa.br                                    %%
+%%                                                                    %%
+%% Further information about abnTeX2                                  %%
+%% are available on https://www.abntex2.net.br/                       %%
+%%                                                                    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{lib/preambulo}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% PONTO DE PARTIDA — este arquivo vem preenchido com um EXEMPLO     %%
+%% de publicação Embrapa (série 'relatorio' = Relatório Técnico),  %%
+%% só para que o template compile e renderize uma amostra de cara.   %%
+%% Os valores abaixo (unidade, autor, título...) são fictícios.      %%
+%%                                                                    %%
+%% Para começar o SEU documento:                                     %%
+%%   1. Escolha o tipo:    \TipoDoc{academico | publicacao | corporativo}
+%%   2. Escolha o subtipo:  \Nivel / \Serie / \Categoria             %%
+%%   3. Substitua os valores de exemplo pelos seus.                  %%
+%%   4. Esvazie ({}) qualquer campo opcional que não usar — ele some %%
+%%      sozinho do PDF (exibição automática de elementos).           %%
+%%                                                                    %%
+%% Para ver cada tipo renderizado lado a lado: ./gerar-exemplos.sh   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%          Configurações do EmbrapaTex            %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> SEUS DADOS (início) <<<
+%% Tudo daqui até \begin{document} é VOCÊ quem edita. Os valores são um
+%% EXEMPLO fictício: troque pelos seus e esvazie ({}) o que não usar
+%% (campos vazios somem do PDF, pela exibição automática de elementos).
+%% Quer partir de um arquivo já em branco? Veja "Começar do zero" no README.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Tipo de documento — a escolha estrutural fundamental (três tipos):
+%   academico   - Trabalhos de graduação/pós (TCC, monografia, dissertação,
+%                 tese, relatório acadêmico). Banca, orientador, campos de
+%                 pesquisa e instituição de ensino. Subtipo via \nivel.
+%   publicacao  - Publicações técnico-científicas da Embrapa (séries). Subtipo
+%                 via \serie; número do documento na capa.
+%   corporativo - Relatórios e análises empresariais (sumário executivo, sem
+%                 banca/ficha). Subtipo via \categoria. O subtipo 'probatorio'
+%                 gera um Relatório de Comprovação de Período Probatório
+%                 (identificação do servidor + assinaturas).
+%
+% O tipo e o subtipo usam \providecommand para que os arquivos de demonstração
+% (exemplo-*.tex) possam sobrescrevê-los via \def antes do \input{main.tex} —
+% veja ./gerar-exemplos.sh. Na compilação normal, valem os padrões abaixo.
+
+\providecommand{\TipoDoc}{publicacao}
+\tipodocumento{\TipoDoc}
+
+% Subtipo: cada tipo tem seu próprio seletor. Edite o valor do SEU tipo abaixo
+% (só o seletor correspondente ao \TipoDoc escolhido é aplicado):
+\providecommand{\Nivel}{relatorio}      % academico:   tcc | monografia | dissertacao | tese | relatorio
+\providecommand{\Serie}{relatorio}      % publicacao:  relatorio | boletim | comunicado | documento
+\providecommand{\Categoria}{relatorio}  % corporativo: relatorio | analise | probatorio
+\ifacademico   \nivel{\Nivel}        \fi
+\ifpublicacao  \serie{\Serie}        \fi
+\ifcorporativo \categoria{\Categoria}\fi
+
+% Caso não previsto? Defina os dois campos diretamente (é o que os seletores
+% preenchem por baixo):
+%   \subtitulodacapa{...}
+%   \naturezadapublicacao{...}
+
+% Remove as bordas vermelhas e verdes do PDF gerado
+% Coloque 'sim' para remover
+
+\removerbordasdohyperlink{sim}
+
+% Adiciona a cor Azul a todos os hyperlinks
+
+\cordohyperlink{nao}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%       Informação sobre a Unidade Embrapa        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Nome da unidade da Embrapa (ex.: Embrapa Agricultura Digital, Embrapa Cerrados, etc.)
+% Em \providecommand para que os exemplos (exemplo-*.tex) o sobrescrevam via \def.
+\providecommand{\Unidade}{Embrapa Agricultura Digital}
+\unidade{\Unidade}
+\providecommand{\UnidadeSigla}{CNPTIA}
+\unidadesigla{\UnidadeSigla}
+
+% Área ou centro de pesquisa (opcional)
+\centro{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   Informação acadêmica (tipo 'academico')       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Campos usados no modo academico. Os \providecommand permitem que os exemplos
+% (exemplo-*.tex) os sobrescrevam via \def; na compilação normal, edite os
+% valores aqui.
+
+% Instituição de ensino (universidade/IES). Usada na capa e no preâmbulo.
+\providecommand{\Instituicao}{Embrapa Agricultura Digital}
+\instituicao{\Instituicao}
+
+% Programa de pós-graduação ou curso (compõe o preâmbulo em tcc/monografia/
+% dissertacao/tese; não usado no nível 'relatorio').
+\providecommand{\ProgramaPesquisa}{}
+\programapesquisa{\ProgramaPesquisa}
+
+% Aparecem na folha de rosto apenas se preenchidas (qualquer nível academico):
+\providecommand{\AreaPesquisa}{}   % Área de concentração
+\areadepesquisa{\AreaPesquisa}
+\providecommand{\LinhaPesquisa}{}  % Linha de pesquisa
+\linhapesquisa{\LinhaPesquisa}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   Informação da série (tipo 'publicacao')       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Número do documento na série (ex.: 123). Impresso na capa se preenchido.
+\providecommand{\NumeroDocumento}{}
+\numerodocumento{\NumeroDocumento}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Identificação do servidor (subtipo 'probatorio') %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Usados quando \TipoDoc{corporativo} + \Categoria{probatorio}. O NOME do
+% servidor é o \autor (definido abaixo). Estes campos alimentam a Seção 1.1
+% (\imprimiridentificacao) e o bloco de assinatura (\imprimirassinaturas).
+% Deixe em branco ({}) os que não usar — somem da identificação automaticamente.
+\providecommand{\MatriculaSiape}{}
+\matriculasiape{\MatriculaSiape}
+\providecommand{\Cargo}{}
+\cargo{\Cargo}
+\providecommand{\Lotacao}{}
+\lotacao{\Lotacao}
+\providecommand{\PeriodoProbatorio}{}
+\periodoprobatorio{\PeriodoProbatorio}
+\providecommand{\Chefia}{}            % Nome da chefia imediata (linha "De acordo")
+\chefia{\Chefia}
+\providecommand{\ChefiaCargo}{}       % Cargo/função da chefia imediata
+\chefiacargo{\ChefiaCargo}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%     Informação relacionada ao documento         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Preencha com os dados do seu trabalho.
+% Em \providecommand para que os exemplos (exemplo-*.tex) os sobrescrevam via \def.
+\providecommand{\Autor}{Maria Exemplo da Silva}
+\autor{\Autor}
+\providecommand{\Titulo}{Análise de um Problema de Pesquisa: Um Estudo de Caso Ilustrativo}
+\titulo{\Titulo}
+\providecommand{\Data}{2026}
+\data{\Data}
+\providecommand{\Local}{Campinas -- SP}
+\local{\Local}
+
+% Data de aprovação (se aplicável). No subtipo 'probatorio' é a data de
+% fechamento usada no bloco de assinatura.
+% Exemplo: \dataaprovacao{01 de janeiro de 2026}
+\providecommand{\DataAprovacao}{15 de junho de 2026}
+\dataaprovacao{\DataAprovacao}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%     Informação sobre o Orientador/Supervisor    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Orientador/supervisor (modo academico). Em \providecommand para os exemplos
+% sobrescreverem; vazio por padrão — num publicacao/relatorio não há orientador.
+\providecommand{\Orientador}{}
+\orientador{\Orientador}
+\providecommand{\OrientadorIes}{}
+\orientadories{\OrientadorIes}
+\orientadorcentro{}
+\orientadorfeminino{nao} % Coloque 'sim' se for do sexo feminino
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%      Informação sobre o Co-orientador           %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Deixe o nome do coorientador em branco para remover do documento
+
+\coorientador{}
+\coorientadories{}
+\coorientadorcentro{}
+\coorientadorfeminino{nao} % Coloque 'sim' se for do sexo feminino
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%      Informação sobre a banca/revisores         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Deixe o nome do membro em branco para remover da folha de aprovação
+% Exemplo de uso:
+% \membrodabancadois{Dr. Fulano de Tal}
+% \membrodabancadoisies{Embrapa Cerrados}
+
+\providecommand{\MembroBancaDois}{}
+\membrodabancadois{\MembroBancaDois}
+\membrodabancadoiscentro{}
+\providecommand{\MembroBancaDoisIes}{}
+\membrodabancadoisies{\MembroBancaDoisIes}
+
+\providecommand{\MembroBancaTres}{}
+\membrodabancatres{\MembroBancaTres}
+\membrodabancatrescentro{}
+\providecommand{\MembroBancaTresIes}{}
+\membrodabancatresies{\MembroBancaTresIes}
+
+\membrodabancaquatro{}
+\membrodabancaquatrocentro{}
+\membrodabancaquatroies{}
+
+\membrodabancacinco{}
+\membrodabancacincocentro{}
+\membrodabancacincoies{}
+
+\membrodabancaseis{}
+\membrodabancaseiscentro{}
+\membrodabancaseisies{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%        Informação da Ficha Catalográfica        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% A ficha catalográfica é gerada automaticamente em LaTeX a partir dos campos
+% abaixo — não é mais necessário anexar um PDF externo. Os dados de
+% classificação (CDD/CDU), os descritores de assunto e o registro CRB do
+% bibliotecário devem ser fornecidos por um(a) bibliotecário(a).
+
+% Nome do autor invertido para a entrada principal (Sobrenome, Nome).
+% Se ficar em branco, será usado o \autor definido acima.
+\autorinvertido{Silva, Maria Exemplo da}
+
+% Dados da publicação
+\edicao{1. ed.}           % Ex.: 1. ed. (deixe em branco se não houver)
+\editora{Embrapa}         % Editora responsável
+\numeropaginas{30}        % Número total de páginas (ex.: 85)
+\ilustracao{il. color.}   % Ex.: il. / il. color. (deixe em branco se não houver)
+\dimensao{21 cm}          % Altura da publicação
+
+% Informações complementares
+\isbn{978-65-00000-00-0}  % ISBN, se houver
+\notaficha{Documento de exemplo gerado com o template EmbrapaTex.} % Nota livre (ex.: tipo do trabalho, orientador)
+\incluibibliografia{sim}  % 'sim' imprime "Inclui bibliografia."
+
+% Dados fornecidos pelo(a) bibliotecário(a)
+\descritores{1. Pesquisa. 2. Metodologia científica. 3. Documentação técnica. I. Título.} % Ex.: 1. Agricultura digital. 2. Sensoriamento remoto. I. Título.
+\cdd{001.42}              % Classificação Decimal de Dewey (ex.: 630)
+\cdu{}                    % Classificação Decimal Universal (opcional)
+\bibliotecario{Bibliotecário(a) Exemplo} % Nome do(a) bibliotecário(a)
+\crb{CRB-8/0000}          % Registro profissional (ex.: CRB-1/1234)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% >>> SEUS DADOS (fim) <<<
+%% Daqui para baixo é a ESTRUTURA do documento (montagem automática:
+%% capa, folha de rosto, listas, sumário, referências, apêndices...).
+%% Normalmente você só precisa editar a LISTA DE CAPÍTULOS — procure
+%% por "SEUS CAPÍTULOS" mais abaixo.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	% Elementos pré-textuais
+	\imprimircapa
+	\imprimirfolhaderosto
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%  Os elementos pré-textuais variam conforme \tipodocumento:           %%
+	%%   - corporativo  -> sumário executivo (modo empresarial)             %%
+	%%   - demais tipos -> estrutura acadêmica/ABNT completa                %%
+	%%  O condicional \ifcorporativo é definido em lib/embrapatex.sty.      %%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\ifcorporativo
+		%% ----- Modo corporativo/empresarial -----
+		\imprimirsumarioexecutivo{elementos-pre-textuais/sumario-executivo}
+	\else
+		%% ----- Modo acadêmico/científico (ABNT) -----
+		\imprimirfichacatalografica
+		\imprimirerrata{elementos-pre-textuais/errata}
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%  Folha de aprovação:                                             %%
+		%%  Caso possua uma folha de aprovação assinada em PDF,             %%
+		%%  descomente a linha \includepdf abaixo e comente                 %%
+		%%  a linha \imprimirfolhadeaprovacao.                              %%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		%\includepdf{elementos-pre-textuais/folha-aprovacao.pdf}
+		\imprimirfolhadeaprovacao
+
+		\imprimirdedicatoria{elementos-pre-textuais/dedicatoria}
+		\imprimiragradecimentos{elementos-pre-textuais/agradecimentos}
+		\imprimirepigrafe{elementos-pre-textuais/epigrafe}
+		\imprimirresumo{elementos-pre-textuais/resumo}
+		\imprimirabstract{elementos-pre-textuais/abstract}
+	\fi
+
+	% Listas e sumário (comuns aos dois modos; cada lista sai vazia se o
+	% documento não tiver o elemento correspondente).
+	\imprimirlistadeilustracoes
+	\imprimirlistadetabelas
+	\imprimirlistadequadros
+	\imprimirlistadealgoritmos
+	\imprimirlistadecodigosfonte
+	\imprimirlistadeabreviaturasesiglas
+	\imprimirlistadesimbolos{elementos-pre-textuais/lista-de-simbolos}
+	\imprimirsumario
+
+	% Elementos textuais
+	\textual
+	\ifprobatorio
+		%% --- Corpo do Relatório de Comprovação de Período Probatório ---
+		%% A Seção 1 (Identificação) é gerada a partir dos metadados do servidor
+		%% (\autor, \matriculasiape, \cargo, \lotacao, \periodoprobatorio, \chefia).
+		\imprimiridentificacao
+		%% >>> A PARTIR DAQUI, adicione os capítulos do SEU relatório. <<<
+		%% A Seção 1.2 (entregas do plano de trabalho) e as Seções 2 a 8 são
+		%% conteúdo seu: crie os arquivos em elementos-textuais/ e inclua-os com
+		%% \input. Esqueleto sugerido (descomente e crie cada arquivo):
+		%	\input{elementos-textuais/probatorio/entregas}            % 1.2
+		%	\input{elementos-textuais/probatorio/contexto-objetivo}   % 2
+		%	\input{elementos-textuais/probatorio/metodologia}         % 3
+		%	\input{elementos-textuais/probatorio/comentarios-madeira} % 4
+		%	\input{elementos-textuais/probatorio/comentarios-castanha}% 5
+		%	\input{elementos-textuais/probatorio/analise-comparativa} % 6
+		%	\input{elementos-textuais/probatorio/produtos-entregues}  % 7
+		%	\input{elementos-textuais/probatorio/conclusao}           % 8
+		%% Bloco de assinatura final (servidor + "De acordo" da chefia):
+		\imprimirassinaturas
+	\else
+		%% >>> SEUS CAPÍTULOS — adicione/remova linhas \input conforme o seu
+		%% documento (cada arquivo em elementos-textuais/ começa com \chapter). <<<
+		\input{elementos-textuais/introducao}
+		\input{elementos-textuais/revisao-de-literatura}
+		\input{elementos-textuais/estado-da-arte}
+		\input{elementos-textuais/material-e-metodos}
+		\input{elementos-textuais/resultados-e-discussao}
+		\input{elementos-textuais/consideracoes-finais}
+	\fi
+
+	% Elementos pós-textuais
+	% Todos abaixo aparecem no PDF SOMENTE quando há conteúdo correspondente;
+	% caso contrário, são omitidos automaticamente (sem título em página vazia).
+
+	% Referências: impressas se houver \cite/\citeonline no texto. Para forçar
+	% a inclusão de uma obra não citada (ex.: a norma ABNT NBR 14724), adicione
+	% \nocite{NBR14724:2005} antes da linha abaixo.
+	\imprimirreferencias{elementos-pos-textuais/referencias}
+
+	% Glossário: impresso se algum termo do glossário principal for usado no
+	% texto com \gls/\Gls (siglas vão para a Lista de Abreviaturas e Siglas).
+	\imprimirglossario
+
+	% Apêndices: passe os \input dentro das chaves. Deixe vazio para omitir.
+	\imprimirapendices{%
+		\input{elementos-pos-textuais/apendices/exemplo-de-apendice}%
+	}
+
+	% Anexos: passe os \input dentro das chaves. Deixe vazio para omitir.
+	\imprimiranexos{%
+		\input{elementos-pos-textuais/anexos/exemplo-de-anexo}%
+	}
+
+	% Índice remissivo: impresso apenas se houver entradas \index{} no texto.
+	\imprimirindice
+
+\end{document}

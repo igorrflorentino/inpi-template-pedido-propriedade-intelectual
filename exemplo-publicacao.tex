@@ -1,0 +1,11 @@
+%% Arquivo de DEMONSTRAÇÃO — não é o documento de trabalho.
+%% Gera uma amostra do template no modo "publicacao" (série Embrapa: Boletim de
+%% Pesquisa e Desenvolvimento, com número do documento na capa), reaproveitando
+%% todo o conteúdo de main.tex (apenas injeta valores via \def).
+%% Compile a partir da RAIZ do repositório:
+%%     latexmk -pdf exemplo-publicacao.tex
+%% ou rode ./gerar-exemplos.sh para gerar todos os exemplos de uma vez.
+\def\TipoDoc{publicacao}
+\def\Serie{boletim}
+\def\NumeroDocumento{123}
+\input{main.tex}
