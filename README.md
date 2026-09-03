@@ -286,13 +286,16 @@ Os textos consultados estão em `referencias-inpi/`, junto aos formulários
 oficiais do e-Patentes 4.0 que serviram de referência tipográfica e de
 conteúdo-guia.
 
-| Documento | Situação |
+| Documento | Papel |
 | --- | --- |
-| Portaria/INPI/DIRPA nº 14, de 29/08/2024 | **vigente** — norma central deste template |
-| Resolução INPI/PR nº 124/2013 — diretrizes de exame | vigente |
-| Portaria INPI nº 39/2021 — fase nacional PCT | vigente |
-| Portaria INPI nº 79/2022 — trâmite prioritário | vigente |
-| IN/INPI/PR nº 30/2013 e nº 31/2013 | **revogadas** pelo art. 66 da Portaria 14/2024 |
+| Portaria/INPI/DIRPA nº 14, de 29/08/2024 | Norma central deste template: forma e conteúdo do pedido |
+| Resolução INPI/PR nº 124/2013 | Diretrizes de exame — conteúdo do pedido |
+| Portaria INPI nº 39/2021 | Entrada na fase nacional de pedidos PCT |
+| Portaria INPI nº 79/2022 | Trâmite prioritário (procedimental) |
+
+Só entram aqui normas **em vigor**. Norma revogada ou superada é removida do
+repositório em vez de guardada com ressalva: material desatualizado à mão é
+convite a decisão errada.
 
 Sempre que este README, o `CLAUDE.md` ou os comentários dos arquivos citarem um
 artigo sem indicar a norma, trata-se da Portaria/INPI/DIRPA nº 14/2024. "LPI" é
