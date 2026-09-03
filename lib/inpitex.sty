@@ -1,0 +1,502 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% InpiTex — pacote de estilo para pedidos de patente junto ao INPI    %%
+%% (Instituto Nacional da Propriedade Industrial)                      %%
+%%                                                                     %%
+%% Implementa as exigências de forma da Portaria/INPI/DIRPA nº 14, de  %%
+%% 29 de agosto de 2024. Cada bloco cita o artigo que o justifica.     %%
+%%                                                                     %%
+%% This work may be distributed and/or modified under the              %%
+%% conditions of the LaTeX Project Public License, either version 1.3  %%
+%% of this license or (at your option) any later version.              %%
+%% The latest version of this license is in                            %%
+%%   http://www.latex-project.org/lppl.txt                             %%
+%% and version 1.3 or later is part of all distributions of LaTeX      %%
+%% version 2005/12/01 or later.                                        %%
+%%                                                                     %%
+%% This work has the LPPL maintenance status `maintained'.             %%
+%%                                                                     %%
+%% The Current Maintainer of this work is Igor Lopes                   %%
+%% Contact: igor.lopes@embrapa.br                                      %%
+%%                                                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{lib/inpitex}[2026/09/03 v1.0 Pedido de patente - Portaria INPI/DIRPA 14/2024]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%              Pacotes                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[brazilian]{babel}
+\RequirePackage{helvet}                 % Helvetica ~ Arial, a fonte dos formulários oficiais
+\RequirePackage{setspace}               % entrelinha 1,5 (art. 17)
+\RequirePackage{geometry}               % margens e travamento do nº de linhas por página
+\RequirePackage{fancyhdr}               % paginação n/N na margem superior (art. 16, II)
+\RequirePackage{lastpage}               % total de páginas DESTA parte
+\RequirePackage{enumitem}               % numeração das reivindicações (art. 28, I)
+\RequirePackage{graphicx}               % figuras — só no documento de desenhos (art. 19)
+\RequirePackage{amsmath}                % expressões matemáticas (art. 20)
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\RequirePackage{longtable}              % tabela que passa de uma página
+\RequirePackage{etoolbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%      Tipografia e layout             %%
+%%  (arts. 16, 17 e 21)                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Art. 17 — "caracteres de, no mínimo, 2,1 mm de altura (corpo 12)". Os
+% formulários oficiais do e-Patentes usam Arial; adotamos a Helvetica, sua
+% equivalente métrica livre, sem escalonamento para não reduzir a altura.
+\renewcommand{\familydefault}{\sfdefault}
+
+% Art. 17 — entrelinha 1½.
+\onehalfspacing
+
+% Art. 17 — justificado (a norma admite também alinhado à esquerda).
+% Sem recuo de primeira linha: o recuo pendente do rótulo [00N] faz esse papel,
+% como nos formulários oficiais (AppBody-Description: left=357, hanging=357).
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35\baselineskip}
+
+% Art. 16, II — a paginação vai na MARGEM SUPERIOR, portanto o cabeçalho fica
+% acima da caixa de texto (includehead=false) e dentro da margem.
+%
+% Art. 17 — "entre 20 e 35 linhas de texto por página". Em vez de deixar o
+% número de linhas ao acaso das margens, travamos a altura da caixa de texto em
+% \inpi@linhasporpagina linhas: assim nenhuma página pode estourar o teto de 35.
+% O \normalsize abaixo NÃO é decorativo: a chave 'lines' do geometry calcula a
+% altura da caixa de texto a partir do \baselineskip vigente, e o
+% \onehalfspacing acima só altera o \baselineskip na próxima seleção de fonte.
+% Sem este \normalsize, o cálculo usaria a entrelinha simples e caberiam ~46
+% linhas por página, estourando o teto de 35 do art. 17.
+\normalsize
+\geometry{
+    a4paper,
+    left=2.5cm,
+    right=2.5cm,
+    top=2.5cm,
+    lines=31,
+    headheight=15pt,
+    headsep=14pt,
+    includehead=false,
+    includefoot=false
+}
+
+% Art. 16, I e II — numeração independente por documento, no formato n/N, em
+% algarismos arábicos, centralizada na margem superior. Como cada parte do
+% pedido é um PDF próprio, \pageref{LastPage} devolve o total DAQUELA parte e a
+% contagem recomeça em 1 naturalmente.
+%
+% Art. 21 — nada mais no cabeçalho e nada no rodapé: sem timbre, sem logotipo,
+% sem filete, sem qualquer indicação estranha à matéria do pedido.
+\fancypagestyle{inpi}{%
+    \fancyhf{}%
+    \renewcommand{\headrulewidth}{0pt}%
+    \renewcommand{\footrulewidth}{0pt}%
+    \fancyhead[C]{\thepage/\pageref{LastPage}}%
+}
+\pagestyle{inpi}
+% O 'plain' é o estilo que o LaTeX impõe em algumas páginas por conta própria;
+% igualamos os dois para que nenhuma página fique sem a paginação exigida.
+\fancypagestyle{plain}{%
+    \fancyhf{}%
+    \renewcommand{\headrulewidth}{0pt}%
+    \renewcommand{\footrulewidth}{0pt}%
+    \fancyhead[C]{\thepage/\pageref{LastPage}}%
+}
+
+% Corpos de letra observados nos formulários oficiais e-Patentes 4.0:
+%   título do pedido  16 pt negrito centralizado  (estilo AppBody-Title)
+%   título de seção   14 pt negrito à esquerda    (estilo AppBody-Heading)
+%   corpo do texto    12 pt                       (estilo AppBody-Description)
+\newcommand{\inpi@fontetitulo}{\fontsize{16}{19}\selectfont\bfseries}
+\newcommand{\inpi@fontesecao}{\fontsize{14}{17}\selectfont\bfseries}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%     Dados do pedido (metadados)      %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Título do pedido — art. 24: até 500 caracteres, sem denominação de fantasia,
+% sem fórmula química ou matemática, e IDÊNTICO no relatório descritivo e no
+% resumo. Daí a fonte única: os dois documentos leem esta mesma macro.
+\newcommand{\inpi@titulo}{}
+\newcommand{\titulodopedido}[1]{\protected@edef\inpi@titulo{#1}}
+
+% ---------------------------------------------------------------------------
+% Eixo 1 — NATUREZA da proteção pretendida.
+%   invencao             patente de invenção      (reivindicações: arts. 29 a 31)
+%   modelo-de-utilidade  patente de modelo de     (reivindicações: arts. 32 a 36;
+%                        utilidade                 desenhos obrigatórios, art. 22)
+% ---------------------------------------------------------------------------
+\newif\ifinvencao
+\newif\ifmodelodeutilidade
+\newcommand{\nomedanatureza}{}   % "invenção" | "modelo de utilidade"
+\newcommand{\danatureza}{}       % "da invenção" | "do modelo de utilidade"
+
+\newcommand{\natureza}[1]{%
+    \protected@edef\inpi@natureza{#1}%
+    \ifdefstring{\inpi@natureza}{invencao}{%
+        \invencaotrue \modelodeutilidadefalse
+        \renewcommand{\nomedanatureza}{invenção}%
+        \renewcommand{\danatureza}{da invenção}%
+    }{%
+        \ifdefstring{\inpi@natureza}{modelo-de-utilidade}{%
+            \invencaofalse \modelodeutilidadetrue
+            \renewcommand{\nomedanatureza}{modelo de utilidade}%
+            \renewcommand{\danatureza}{do modelo de utilidade}%
+        }{%
+            \PackageError{inpitex}{%
+                Natureza desconhecida: '#1'.\MessageBreak
+                Use \protect\natureza{invencao} ou
+                \protect\natureza{modelo-de-utilidade}%
+            }{Corrija o valor em dados-do-pedido.tex.}%
+        }%
+    }%
+}
+\natureza{invencao}   % padrão
+
+% ---------------------------------------------------------------------------
+% Eixo 2 — MODALIDADE do depósito. Muda a menção que vem logo após o título do
+% relatório descritivo (e nada mais na forma dos documentos).
+%   originario         depósito comum
+%   adicao             certificado de adição de invenção (art. 43, II)
+%   divisao            pedido dividido                   (art. 51, II)
+%   fase-nacional-pct  entrada na fase nacional via PCT  (Portaria 39/2021)
+% ---------------------------------------------------------------------------
+\newif\ifpedidooriginario
+\newif\ifcertificadodeadicao
+\newif\ifpedidodividido
+\newif\iffasenacionalpct
+
+\newcommand{\modalidade}[1]{%
+    \protected@edef\inpi@modalidade{#1}%
+    \pedidooriginariofalse \certificadodeadicaofalse
+    \pedidodivididofalse   \fasenacionalpctfalse
+    \ifdefstring{\inpi@modalidade}{originario}{\pedidooriginariotrue}{%
+    \ifdefstring{\inpi@modalidade}{adicao}{\certificadodeadicaotrue}{%
+    \ifdefstring{\inpi@modalidade}{divisao}{\pedidodivididotrue}{%
+    \ifdefstring{\inpi@modalidade}{fase-nacional-pct}{\fasenacionalpcttrue}{%
+        \PackageError{inpitex}{%
+            Modalidade desconhecida: '#1'.\MessageBreak
+            Use originario, adicao, divisao ou fase-nacional-pct%
+        }{Corrija o valor em dados-do-pedido.tex.}%
+    }}}}%
+}
+\modalidade{originario}   % padrão
+
+% Número do pedido ou da patente a que este documento se vincula. Obrigatório
+% nas modalidades 'adicao' (art. 43, II) e 'divisao' (art. 51, II).
+\newcommand{\inpi@vinculado}{}
+\newcommand{\pedidovinculado}[1]{\protected@edef\inpi@vinculado{#1}}
+
+% Coerência entre os dois eixos e os campos obrigatórios, checada na abertura
+% do documento (\AtBeginDocument) para que valha qualquer ordem de preenchimento.
+\AtBeginDocument{%
+    \ifdefempty{\inpi@titulo}{%
+        \PackageError{inpitex}{%
+            O titulo do pedido esta vazio.\MessageBreak
+            Preencha \protect\titulodopedido{...} em dados-do-pedido.tex%
+        }{O art. 24 da Portaria INPI/DIRPA 14/2024 exige o titulo.}%
+    }{}%
+    \ifcertificadodeadicao
+        \ifmodelodeutilidade
+            \PackageError{inpitex}{%
+                Certificado de adicao so existe para patente de invencao.\MessageBreak
+                Ver arts. 42 e 43 da Portaria INPI/DIRPA 14/2024%
+            }{Use \protect\natureza{invencao} ou outra modalidade.}%
+        \fi
+    \fi
+    \ifboolexpr{ bool {certificadodeadicao} or bool {pedidodividido} }{%
+        \ifdefempty{\inpi@vinculado}{%
+            \PackageError{inpitex}{%
+                Falta o numero do pedido/patente vinculado.\MessageBreak
+                Preencha \protect\pedidovinculado{...} em dados-do-pedido.tex%
+            }{Exigido pelos arts. 43, II e 51, II.}%
+        }{}%
+    }{}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   Parágrafos numerados (art. 26, II) %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Art. 26, II — "indicar cada parágrafo com uma numeração sequencial, em
+% algarismos arábicos, localizada à esquerda do texto, como por exemplo [003],
+% [015]". O rótulo fica na primeira linha e as linhas seguintes recuam,
+% reproduzindo o recuo pendente dos formulários oficiais.
+\newcounter{paragrafoinpi}
+
+% Largura reservada ao rótulo. Os formulários oficiais usam 0,63 cm para o
+% formato de um dígito; com três dígitos ([001]) é preciso um pouco mais.
+\newlength{\inpirecuoparagrafo}
+\setlength{\inpirecuoparagrafo}{1.2cm}
+
+% Zero à esquerda até três dígitos: 1 -> 001, 27 -> 027, 145 -> 145.
+\newcommand{\inpi@tresdigitos}[1]{%
+    \ifnum#1<10 00\else\ifnum#1<100 0\fi\fi\number#1%
+}
+\newcommand{\inpi@rotulo}{[\inpi@tresdigitos{\value{paragrafoinpi}}]}
+
+% Formato do rótulo: 'tres-digitos' (padrão, como no exemplo da norma) ou
+% 'arabico' ([1], [2], ... como nos formulários oficiais).
+\newcommand{\formatorotuloparagrafo}[1]{%
+    \protected@edef\inpi@fmtrotulo{#1}%
+    \ifdefstring{\inpi@fmtrotulo}{tres-digitos}{%
+        \renewcommand{\inpi@rotulo}{[\inpi@tresdigitos{\value{paragrafoinpi}}]}%
+    }{%
+        \ifdefstring{\inpi@fmtrotulo}{arabico}{%
+            \renewcommand{\inpi@rotulo}{[\arabic{paragrafoinpi}]}%
+        }{%
+            \PackageError{inpitex}{%
+                Formato de rotulo desconhecido: '#1'.\MessageBreak
+                Use tres-digitos ou arabico%
+            }{Corrija a chamada de \protect\formatorotuloparagrafo.}%
+        }%
+    }%
+}
+
+% \pnum abre um parágrafo numerado. Uso:
+%
+%     \pnum A presente invenção refere-se a ...
+%
+%     \pnum Em uma concretização preferida ...
+%
+% Não recebe argumento de propósito: assim tabelas, fórmulas e expressões
+% matemáticas podem ser intercaladas entre parágrafos sem quebrar nenhum
+% ambiente de lista.
+\newcommand{\pnum}{%
+    \par
+    \refstepcounter{paragrafoinpi}%
+    \noindent
+    \hangindent\inpirecuoparagrafo
+    \hangafter=1
+    \makebox[\inpirecuoparagrafo][l]{\inpi@rotulo}%
+    \ignorespaces
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%      Títulos de seção do relatório   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% As seções do relatório descritivo seguem a ordem do art. 27 (incisos I a IX).
+% Não há numeração de capítulo/seção nem sumário no pedido de patente, então o
+% título é apenas um rótulo tipográfico.
+\newcommand{\secaoinpi}[1]{%
+    \par\addvspace{\baselineskip}%
+    \noindent{\inpi@fontesecao #1}%
+    \par\nobreak\addvspace{0.3\baselineskip}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%     Tabelas e fórmulas (art. 20)     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Art. 20 — "Tabelas, fórmulas ou estruturas químicas e expressões matemáticas,
+% quando inseridas no texto do relatório descritivo ou nas reivindicações,
+% deverão ser apresentadas na cor preta e identificadas de forma sequencial."
+%
+% A legenda vai ACIMA da tabela, como nos formulários oficiais
+% ("Tabela 1 - Exemplos Comparativos"). Nada de linha "Fonte:" — isso é
+% elemento da ABNT, estranho ao pedido de patente (art. 21).
+%
+% Uso:
+%     \begin{tabelainpi}{Exemplos comparativos}
+%         \begin{tabular}{lll}
+%             ...
+%         \end{tabular}
+%     \end{tabelainpi}
+\newcounter{tabelainpi}
+\newenvironment{tabelainpi}[1]{%
+    \par\addvspace{\baselineskip}%
+    \refstepcounter{tabelainpi}%
+    \begin{center}%
+    \begin{singlespace}%
+    Tabela \arabic{tabelainpi} -- #1\par\addvspace{0.4\baselineskip}%
+}{%
+    \end{singlespace}%
+    \end{center}%
+    \par\addvspace{0.5\baselineskip}%
+}
+
+% Expressões matemáticas: use o ambiente 'equation' do amsmath, que já numera
+% sequencialmente. Estruturas químicas podem ser inseridas como texto em preto.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   Reivindicações (arts. 18 e 28)     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Art. 28, I — cada reivindicação numerada consecutivamente em algarismos
+% arábicos. Art. 28, II — uma única expressão "caracterizado por".
+% Art. 28, III — redigida sem interrupção por pontos (um único ponto final).
+%
+% Uso:
+%     \begin{quadroreivindicatorio}
+%         \reivindicacao COMPOSIÇÃO ..., caracterizada por ...
+%         \reivindicacao COMPOSIÇÃO ..., de acordo com a reivindicação 1, ...
+%     \end{quadroreivindicatorio}
+\newlist{quadroreivindicatorio}{enumerate}{1}
+\setlist[quadroreivindicatorio]{
+    label=\arabic*.,
+    leftmargin=\inpirecuoparagrafo,
+    labelsep=0.4em,
+    labelwidth=\inpirecuoparagrafo,
+    align=left,
+    topsep=\baselineskip,
+    itemsep=0.6\baselineskip,
+    parsep=0pt,
+    partopsep=0pt
+}
+% Apelido em português para o \item, para que o arquivo de conteúdo se leia
+% como o quadro reivindicatório que ele é.
+\newcommand{\reivindicacao}{\item}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Desenhos (arts. 26 III, 37, 38, 39) %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Declaração ÚNICA das figuras, em pedido/desenhos/figuras.tex:
+%
+%     \figura{nome-do-arquivo}{a vista frontal do conjunto montado (1)}
+%
+% O mesmo arquivo é lido duas vezes, e a macro \figura se comporta de um jeito
+% em cada leitura:
+%
+%   - no relatório descritivo, gera a listagem exigida pelos arts. 26, III e
+%     27, V ("A Figura 1 apresenta a vista frontal do conjunto montado (1).");
+%   - no documento de desenhos, posiciona a imagem com o rótulo "Figura N".
+%
+% Assim a numeração e a ordem das figuras são consistentes por construção, e
+% não há duas listas para manter em sincronia.
+\newcounter{figurainpi}
+
+% Opções padrão do \includegraphics: a figura se ajusta à caixa de texto sem
+% distorção, ocupando no máximo a página inteira.
+\newcommand{\inpi@opcoesfigura}{width=\linewidth,height=0.88\textheight,keepaspectratio}
+
+% Modo "listagem" — usado no relatório descritivo.
+% A norma não exige numeração de parágrafo nesta listagem (é o que os
+% formulários oficiais explicitam), portanto os itens saem como parágrafos
+% simples, sem o rótulo [00N].
+\newcommand{\inpi@figuralistagem}[3][]{%
+    \refstepcounter{figurainpi}%
+    \par A Figura~\arabic{figurainpi} apresenta #3.%
+}
+
+% Modo "desenho" — usado no documento de desenhos. Art. 38, III: numeradas
+% consecutivamente. Art. 37: várias por página, nitidamente separadas — o que
+% se obtém passando uma largura menor no argumento opcional.
+\newcommand{\inpi@figuradesenho}[3][\inpi@opcoesfigura]{%
+    \refstepcounter{figurainpi}%
+    \par\addvspace{\baselineskip}%
+    \begin{center}%
+    \begin{singlespace}%
+        \expandafter\includegraphics\expandafter[#1]{figuras/#2}%
+        \par\addvspace{0.5\baselineskip}%
+        Figura \arabic{figurainpi}%
+    \end{singlespace}%
+    \end{center}%
+    \par\addvspace{\baselineskip}%
+}
+
+\newcommand{\figura}{\inpi@figuralistagem}   % redefinido por \abrirdesenhos
+
+% Arquivo de declaração das figuras. Trocável, mas o padrão serve ao template.
+\newcommand{\inpi@arquivofiguras}{pedido/desenhos/figuras}
+\newcommand{\arquivodefiguras}[1]{\renewcommand{\inpi@arquivofiguras}{#1}}
+
+% Chamada no relatório descritivo, na posição do art. 27, V.
+\newcommand{\imprimirdescricaodosdesenhos}{%
+    \let\figura\inpi@figuralistagem
+    \input{\inpi@arquivofiguras}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%     Abertura de cada documento       %%
+%%     (arts. 16, 18, 26 I e 40 I)      %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Menção que vem logo após o título, conforme a modalidade.
+\newcommand{\inpi@mencaodevinculo}{%
+    \ifcertificadodeadicao
+        {\par\addvspace{0.5\baselineskip}%
+         Certificado de adição de invenção do \inpi@vinculado\par}%
+    \fi
+    \ifpedidodividido
+        {\par\addvspace{0.5\baselineskip}%
+         Dividido do \inpi@vinculado\par}%
+    \fi
+}
+
+% Título do pedido, centralizado e separado do texto. Art. 26, I: só na página
+% inicial do relatório descritivo. Art. 40, I: idem no resumo.
+\newcommand{\inpi@imprimirtitulo}{%
+    \begin{center}%
+    \begin{singlespace}%
+        {\inpi@fontetitulo \inpi@titulo}%
+        \inpi@mencaodevinculo
+    \end{singlespace}%
+    \end{center}%
+    \par\addvspace{1.5\baselineskip}%
+}
+
+% Cabeçalho de identificação do documento (art. 18), centralizado no topo da
+% primeira página, acima do início do texto.
+\newcommand{\inpi@cabecalhodocumento}[1]{%
+    \begin{center}%
+    \begin{singlespace}%
+        {\inpi@fontetitulo #1}%
+    \end{singlespace}%
+    \end{center}%
+    \par\addvspace{1.5\baselineskip}%
+}
+
+% --- Relatório descritivo (art. 26, I) ---
+\newcommand{\abrirrelatoriodescritivo}{%
+    \inpi@imprimirtitulo
+}
+
+% --- Reivindicações (art. 18) ---
+\newcommand{\abrirreivindicacoes}{%
+    \inpi@cabecalhodocumento{REIVINDICAÇÕES}%
+}
+
+% --- Resumo (arts. 18 e 40, I) ---
+\newcommand{\abrirresumo}{%
+    \inpi@cabecalhodocumento{RESUMO}%
+    \inpi@imprimirtitulo
+}
+
+% --- Desenhos (arts. 37 e 38) ---
+% Art. 38, I — as figuras devem ficar dispostas na página com margem superior
+% entre 2,5 cm e 4 cm; esquerda e direita entre 1,5 cm e 2,5 cm; e inferior de
+% pelo menos 1 cm. Este documento tem, portanto, geometria própria, e não vale
+% para ele o travamento de linhas por página do art. 17 (que trata de texto).
+\newcommand{\abrirdesenhos}{%
+    \newgeometry{
+        top=3cm,
+        left=2cm,
+        right=2cm,
+        bottom=2cm,
+        headheight=15pt,
+        headsep=14pt,
+        includehead=false,
+        includefoot=false
+    }%
+    \let\figura\inpi@figuradesenho
+    \inpi@cabecalhodocumento{DESENHOS}%
+}
+
+% Percorre a declaração de figuras posicionando as imagens.
+\newcommand{\imprimirdesenhos}{%
+    \let\figura\inpi@figuradesenho
+    \input{\inpi@arquivofiguras}%
+}
+
+% Força o início de uma nova página do documento de desenhos.
+\newcommand{\novapaginadedesenhos}{\clearpage}
+
+\endinput
