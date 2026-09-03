@@ -89,7 +89,32 @@ IRRIGAÇÃO E PROCESSO DE CONTROLE DE VAZÃO}
 \formatorotuloparagrafo{tres-digitos}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 5. DADOS DO DEPÓSITO — NÃO SÃO IMPRESSOS EM NENHUM DOCUMENTO
+%% 5. CÓPIA DE COMPARAÇÃO (arts. 51, III e 57, II)
+%%
+%% Ao apresentar modificação depois do depósito, ou ao depositar pedido
+%% dividido, a norma pede dois documentos tirados da MESMA matéria: os
+%% documentos modificados "sem qualquer tipo de rasura ou sinalização"
+%% (art. 57, I) e uma cópia de comparação com tachado indicando remoção e
+%% sublinhado indicando inclusão ou substituição (art. 57, II).
+%%
+%% Marque as alterações no texto com \removido{...}, \incluido{...} e
+%% \substituido{...}{...} (e, para blocos inteiros, \paragraforemovido e
+%% \reivindicacaoremovida). O mesmo arquivo gera as duas saídas.
+%%
+%% NÃO mexa no valor abaixo. Para gerar a cópia de comparação use
+%%
+%%     make comparacao        (ou ./gerar-copia-de-comparacao.sh)
+%%
+%% que produz os PDFs *-comparacao.pdf sem tocar neste arquivo. Deixar 'sim'
+%% aqui faria os PDFs do pedido saírem marcados, contrariando o art. 57, I —
+%% e por isso o `make verificar` recusa compilar assim.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\providecommand{\CopiaDeComparacao}{nao}
+\copiadecomparacao{\CopiaDeComparacao}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 6. DADOS DO DEPÓSITO — NÃO SÃO IMPRESSOS EM NENHUM DOCUMENTO
 %%
 %% Guarde-os aqui para ter tudo em um lugar só, mas saiba que eles NÃO vão
 %% para os PDFs: são preenchidos no formulário eletrônico de requerimento do

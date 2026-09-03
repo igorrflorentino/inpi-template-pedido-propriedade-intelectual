@@ -191,6 +191,59 @@ identificando o mesmo elemento em todas as figuras; ordenadas conforme o
 relatório. As figuras de exemplo em `figuras/` são desenhos vetoriais, com as
 fontes em `figuras/fontes-dos-exemplos/` — substitua-as pelas do seu pedido.
 
+### Cópia de comparação (modificações e pedido dividido)
+
+Ao apresentar modificação depois do depósito, ou ao depositar pedido dividido, a
+norma pede **dois** documentos tirados da mesma matéria:
+
+- os documentos modificados, **sem qualquer tipo de rasura ou sinalização**
+  (**art. 57, I**) — são os PDFs de `make pdf`;
+- uma **cópia de comparação** indicando a localização das alterações, com
+  **tachado** para remoção e **sublinhado** para inclusão ou substituição
+  (**art. 57, II**; para o quadro reivindicatório do pedido dividido, o
+  **art. 51, III**).
+
+Você marca as alterações uma vez no texto, e o mesmo arquivo gera as duas
+saídas:
+
+```latex
+\pnum ... pulsos de corrente de duração determinada\incluido{, inferior ao
+tempo de resposta do assento de vedação de dupla face (9)}.
+
+\pnum O limite de pressão é de \substituido{200 kPa}{240 kPa}.
+
+\paragraforemovido{A unidade de controle (8) pode ainda ser substituída por um
+temporizador mecânico.}
+```
+
+| Macro | No documento do pedido | Na cópia de comparação |
+| --- | --- | --- |
+| `\removido{texto}` | não imprime nada | ~~texto~~ |
+| `\incluido{texto}` | texto, sem marca | <u>texto</u> |
+| `\substituido{antigo}{novo}` | novo, sem marca | ~~antigo~~ <u>novo</u> |
+| `\paragraforemovido{texto}` | nada, e **não consome número** | parágrafo tachado, com `[–]` no lugar do número |
+| `\reivindicacaoremovida{6}{texto}` | nada, e **não consome número** | reivindicação tachada, exibindo o número que tinha |
+
+As duas últimas não consomem número justamente para que a numeração sequencial
+dos parágrafos (art. 26, II) e das reivindicações (art. 28, I) siga contínua no
+documento do pedido depois da supressão.
+
+Para gerar a cópia de comparação:
+
+```sh
+make comparacao     # produz relatorio-descritivo-comparacao.pdf etc.
+```
+
+O script injeta o modo por linha de comando e **não altera
+`dados-do-pedido.tex`** — assim não há como anexar ao peticionamento a versão
+marcada por descuido. Como reforço, `make verificar` recusa a verificação se
+alguém deixar `\CopiaDeComparacao{sim}` no arquivo, porque nesse caso os PDFs do
+pedido sairiam marcados, contra o art. 57, I.
+
+O parágrafo único do art. 57 permite substituir a cópia de comparação por um
+esclarecimento apontando página, trecho e tipo de modificação. Se preferir esse
+caminho, escreva-o em prosa na petição.
+
 ---
 
 ## O que **não** entra nos documentos
@@ -226,6 +279,7 @@ make relatorio    # compila só o relatório descritivo
 make verificar    # rede de conformidade normativa
 make lint         # análise estática (chktex) dos arquivos de prosa
 make exemplos     # showcase dos dois eixos de seleção
+make comparacao   # cópia de comparação (arts. 51, III e 57, II)
 make limpar       # remove artefatos
 make ajuda        # lista os alvos
 ```
@@ -272,8 +326,6 @@ CI o executa, como passo bloqueante.
   LaTeX. Complementa o relatório descritivo e é anexada à parte.
 - **Formulário de requerimento, GRU e procuração** (arts. 4º, 7º e 59). São atos
   no sistema de peticionamento.
-- **Cópia de comparação** com tachado e sublinhado, exigida em petições de
-  modificação e em pedido dividido (arts. 51, III e 57, II).
 - **Outros direitos de propriedade intelectual.** O escopo aqui é patente —
   invenção e modelo de utilidade. Marca, desenho industrial, programa de
   computador e cultivar têm normas e formulários próprios.

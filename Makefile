@@ -2,7 +2,7 @@
 # Requer latexmk (compilação) e, para `make lint`, chktex — ambos vêm no
 # TeX Live. Rode `make` (ou `make ajuda`) para ver os alvos.
 
-.PHONY: all pdf relatorio reivindicacoes desenhos resumo exemplos verificar lint limpar ajuda
+.PHONY: all pdf relatorio reivindicacoes desenhos resumo exemplos comparacao verificar lint limpar ajuda
 
 # As quatro peças do pedido (art. 16 da Portaria/INPI/DIRPA nº 14/2024): cada
 # uma é uma raiz LaTeX própria e gera o PDF que se anexa ao peticionamento.
@@ -44,6 +44,10 @@ resumo: resumo.pdf
 exemplos:
 	bash gerar-exemplos.sh
 
+## comparacao Gera a cópia de comparação das peças (arts. 51, III e 57, II)
+comparacao:
+	bash gerar-copia-de-comparacao.sh
+
 ## verificar Roda a rede de conformidade normativa sobre os PDFs gerados
 verificar:
 	bash verificar-conformidade.sh
@@ -55,9 +59,10 @@ lint:
 ## limpar    Remove artefatos de compilação (inclui os PDFs do showcase)
 limpar:
 	latexmk -C $(addsuffix .tex,$(PECAS)) || true
-	rm -f $(PDFS) exemplo-*.pdf
+	rm -f $(PDFS) exemplo-*.pdf ./*-comparacao.pdf
 	rm -f *.aux *.log *.out *.fls *.fdb_latexmk *.synctex.gz
 	rm -f exemplo-*.aux exemplo-*.log exemplo-*.out exemplo-*.fls exemplo-*.fdb_latexmk
+	rm -f ./*-comparacao.aux ./*-comparacao.log ./*-comparacao.out ./*-comparacao.fls ./*-comparacao.fdb_latexmk
 
 ## ajuda     Mostra esta lista de alvos
 ajuda:

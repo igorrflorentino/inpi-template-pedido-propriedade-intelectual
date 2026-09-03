@@ -50,6 +50,27 @@ NATUREZA=$(sed -n 's/^[[:space:]]*\\providecommand{\\NaturezaDoPedido}{\([^}]*\)
 [ -z "$NATUREZA" ] && NATUREZA=invencao
 
 # ---------------------------------------------------------------------------
+# Art. 57, I — os documentos do pedido vão "sem qualquer tipo de rasura ou
+# sinalização". A cópia de comparação do art. 57, II é documento SEPARADO, que
+# acompanha a petição, e se gera com ./gerar-copia-de-comparacao.sh.
+#
+# Deixar \CopiaDeComparacao{sim} em dados-do-pedido.tex faria os PDFs do pedido
+# saírem tachados e sublinhados. Isso aborta a verificação aqui, antes mesmo de
+# compilar: é o erro mais caro que este template permitiria cometer, porque o
+# documento sairia formalmente inaceitável sem nada parecer errado.
+# ---------------------------------------------------------------------------
+MODO_COMPARACAO=$(sed -n 's/^[[:space:]]*\\providecommand{\\CopiaDeComparacao}{\([^}]*\)}.*/\1/p' \
+    dados-do-pedido.tex | tail -1)
+if [ "${MODO_COMPARACAO:-nao}" = "sim" ]; then
+    secao "Art. 57, I — documentos do pedido sem sinalização"
+    falha "dados-do-pedido.tex está com \\CopiaDeComparacao{sim}: os PDFs do pedido sairiam marcados"
+    printf '%s\n' "           Volte o valor para 'nao'. Para gerar a cópia de comparação do"
+    printf '%s\n' "           art. 57, II use 'make comparacao', que não altera este arquivo."
+    printf '\n%s\n' "Conformidade de forma: 1 FALHA(S)"
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
 # Compilação
 # ---------------------------------------------------------------------------
 if [ "$APENAS_VERIFICAR" -eq 0 ]; then

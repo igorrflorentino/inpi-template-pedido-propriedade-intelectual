@@ -110,3 +110,22 @@ jobs:
           name: exemplos-pdf
           path: exemplo-*.pdf
           if-no-files-found: error
+
+      # Cópia de comparação (SÓ-DO-TEMPLATE): prova que a mesma fonte gera as
+      # duas saídas exigidas pelo art. 57 — os documentos do pedido sem
+      # sinalização (inciso I, já compilados acima) e a cópia com tachado e
+      # sublinhado (inciso II). O conteúdo-exemplo traz marcações de propósito,
+      # para que as duas saídas realmente difiram.
+      - name: Gerar a cópia de comparação
+        if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
+        run: |
+          docker run --rm -v "$PWD:/work" -w /work \
+            texlive/texlive:latest bash gerar-copia-de-comparacao.sh
+
+      - name: Publicar a cópia de comparação como artefato
+        if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
+        uses: actions/upload-artifact@v7
+        with:
+          name: copia-de-comparacao-pdf
+          path: '*-comparacao.pdf'
+          if-no-files-found: error

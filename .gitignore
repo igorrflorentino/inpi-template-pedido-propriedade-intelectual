@@ -14,6 +14,10 @@
 # apenas os PDFs gerados são ignorados)
 /exemplo-*.pdf
 
+# Cópias de comparação geradas por ./gerar-copia-de-comparacao.sh (art. 57, II).
+# Acompanham a petição, mas são saída de compilação como qualquer outra.
+/*-comparacao.pdf
+
 # Auxiliares gerais do LaTeX
 *.aux
 *.log

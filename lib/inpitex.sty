@@ -41,6 +41,7 @@
 \RequirePackage{array}
 \RequirePackage{booktabs}
 \RequirePackage{longtable}              % tabela que passa de uma página
+\RequirePackage[normalem]{ulem}    % tachado e sublinhado da cópia de comparação
 \RequirePackage{etoolbox}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,10 +94,16 @@
 %
 % Art. 21 — nada mais no cabeçalho e nada no rodapé: sem timbre, sem logotipo,
 % sem filete, sem qualquer indicação estranha à matéria do pedido.
+% \inpi@marcadecomparacao fica VAZIA no documento do pedido; só a cópia de
+% comparação a preenche (ver \copiadecomparacao, adiante). É por isso que ela
+% aparece no cabeçalho sem violar o art. 21: no documento que se anexa ao
+% peticionamento ela não imprime nada.
+\newcommand{\inpi@marcadecomparacao}{}
 \fancypagestyle{inpi}{%
     \fancyhf{}%
     \renewcommand{\headrulewidth}{0pt}%
     \renewcommand{\footrulewidth}{0pt}%
+    \fancyhead[L]{\inpi@marcadecomparacao}%
     \fancyhead[C]{\thepage/\pageref{LastPage}}%
 }
 \pagestyle{inpi}
@@ -106,6 +113,7 @@
     \fancyhf{}%
     \renewcommand{\headrulewidth}{0pt}%
     \renewcommand{\footrulewidth}{0pt}%
+    \fancyhead[L]{\inpi@marcadecomparacao}%
     \fancyhead[C]{\thepage/\pageref{LastPage}}%
 }
 
@@ -353,6 +361,115 @@
 % Apelido em português para o \item, para que o arquivo de conteúdo se leia
 % como o quadro reivindicatório que ele é.
 \newcommand{\reivindicacao}{\item}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   Cópia de comparação                %%
+%%   (arts. 51, III e 57)               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Quando se apresenta modificação depois do depósito, ou quando se deposita um
+% pedido dividido, a norma pede DOIS documentos que saem da MESMA matéria:
+%
+%   art. 57, I    os documentos modificados, "sem qualquer tipo de rasura ou
+%                 sinalização" — ou seja, o texto final, limpo;
+%   art. 57, II   uma cópia de comparação indicando a localização das
+%                 alterações, com marcação de TACHADO indicando remoção e
+%                 SUBLINHADO indicando inclusão ou substituição.
+%   art. 51, III  o mesmo, para o quadro reivindicatório do pedido dividido em
+%                 relação ao último quadro apresentado no pedido original.
+%
+% Manter os dois à mão é duplicar a matéria e garantir que uma hora as duas
+% versões divirjam. Aqui há uma fonte só: você marca as alterações no texto com
+% as macros abaixo, e o mesmo arquivo gera as duas saídas.
+%
+%   \copiadecomparacao{nao}  (padrão) — documento do pedido. \removido some por
+%                            completo e \incluido imprime texto normal: o
+%                            resultado não tem sinalização nenhuma, como exige
+%                            o art. 57, I.
+%   \copiadecomparacao{sim}  — cópia de comparação. \removido sai tachado e
+%                            \incluido sublinhado, e o cabeçalho passa a
+%                            identificar o documento.
+%
+% A troca é feita pelo ./gerar-copia-de-comparacao.sh, que gera os PDFs
+% *-comparacao.pdf sem que você precise editar dados-do-pedido.tex — assim não
+% há risco de anexar ao peticionamento a versão marcada.
+%
+% O parágrafo único do art. 57 permite substituir a cópia de comparação por um
+% esclarecimento apontando página, trecho e tipo de modificação. Se preferir
+% esse caminho, escreva-o em prosa na petição; não é caso para estas macros.
+
+\newif\ifcopiadecomparacao
+
+\newcommand{\copiadecomparacao}[1]{%
+    \protected@edef\inpi@modocomparacao{#1}%
+    \ifdefstring{\inpi@modocomparacao}{sim}{%
+        \copiadecomparacaotrue
+        \renewcommand{\inpi@marcadecomparacao}{\footnotesize CÓPIA DE COMPARAÇÃO}%
+    }{%
+        \ifdefstring{\inpi@modocomparacao}{nao}{%
+            \copiadecomparacaofalse
+            \renewcommand{\inpi@marcadecomparacao}{}%
+        }{%
+            \PackageError{inpitex}{%
+                Valor desconhecido para copiadecomparacao: '#1'.\MessageBreak
+                Use sim ou nao%
+            }{Corrija o valor em dados-do-pedido.tex.}%
+        }%
+    }%
+}
+\copiadecomparacao{nao}   % padrão: o documento do pedido, sem sinalização
+
+% --- Marcação em linha, para trechos dentro de um parágrafo ---------------
+%
+%   \removido{trecho}          trecho suprimido
+%   \incluido{trecho}          trecho acrescentado
+%   \substituido{antigo}{novo} troca de um trecho por outro
+%
+% No documento limpo, \removido não imprime NADA (o trecho foi mesmo retirado)
+% e \incluido imprime o texto sem marca alguma. É essa assimetria que faz uma
+% fonte única servir às duas saídas.
+\newcommand{\removido}[1]{\ifcopiadecomparacao\sout{#1}\fi}
+\newcommand{\incluido}[1]{\ifcopiadecomparacao\uline{#1}\else#1\fi}
+\newcommand{\substituido}[2]{%
+    \ifcopiadecomparacao\sout{#1} \uline{#2}\else#2\fi
+}
+
+% --- Parágrafo inteiro removido do relatório descritivo -------------------
+%
+%   \paragraforemovido{texto do parágrafo suprimido}
+%
+% No documento limpo não imprime nada E NÃO INCREMENTA o contador, de modo que
+% a numeração sequencial do art. 26, II permaneça contínua depois da supressão.
+% Na cópia de comparação sai tachado, com um rótulo neutro no lugar do número,
+% para deixar claro que ali havia um parágrafo numerado.
+\newcommand{\paragraforemovido}[1]{%
+    \ifcopiadecomparacao
+        \par
+        \noindent
+        \hangindent\inpirecuoparagrafo
+        \hangafter=1
+        % \textendash e não "--": é o mesmo traço que o LaTeX produziria,
+        % mas escrito de forma explícita, para ninguém "corrigir" depois.
+        \makebox[\inpirecuoparagrafo][l]{[\textendash]}%
+        \sout{#1}%
+        \par
+    \fi
+}
+
+% --- Reivindicação inteira removida do quadro -----------------------------
+%
+%   \reivindicacaoremovida{<número que ela tinha>}{texto da reivindicação}
+%
+% Use DENTRO do ambiente quadroreivindicatorio. No documento limpo não imprime
+% nada e não consome número, de modo que as reivindicações restantes fiquem
+% renumeradas consecutivamente, como exige o art. 28, I. Na cópia de comparação
+% sai tachada, exibindo entre colchetes o número que ela tinha no quadro
+% anterior — daí o primeiro argumento.
+\newcommand{\reivindicacaoremovida}[2]{%
+    \ifcopiadecomparacao
+        \item[\sout{#1.}]\sout{#2}%
+    \fi
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Desenhos (arts. 26 III, 37, 38, 39) %%
