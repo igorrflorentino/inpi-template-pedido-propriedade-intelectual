@@ -49,20 +49,57 @@ Com a pasta plana, esse arquivo é a peça mais importante daqui. É o índice q
 aberto. Há um modelo ao lado deste arquivo — preencha-o antes de acionar o
 agente.
 
-## Por que o conteúdo não vai para o git
+## Versionar ou não o conteúdo: a decisão
 
-O `.gitignore` ignora tudo nesta pasta, menos estes dois arquivos de instrução.
-Três razões:
+Por **padrão** o `.gitignore` ignora tudo nesta pasta, menos os dois arquivos de
+instrução. É o padrão seguro, para proteger quem não pensou no assunto. Mas é
+uma decisão a tomar, e há um caso legítimo para invertê-la.
 
-1. **Sigilo.** Divulgação antes do depósito destrói a novidade (art. 11 da LPI).
-   O período de graça do art. 12 é rede de proteção, não plano — e o art. 11,
-   § 2º da Portaria 14/2024 só aceita, para esse fim, divulgação de documentos
-   não-patentários. Material que não é versionado não vaza por acidente de
-   repositório.
-2. **Direito de terceiro.** Os documentos de `anterioridades/` são obra alheia.
-3. **Lugar canônico.** O acervo do projeto pertence ao sistema documental da sua
-   instituição, não a um repositório de LaTeX.
+### O caso para versionar
 
-Se você preferir versionar — repositório privado, tudo num lugar só,
-rastreabilidade — é decisão legítima: basta remover as linhas correspondentes do
-`.gitignore`. Só que seja decisão, não descuido.
+Repositório do pedido **privado**, equipe usando o repositório como **fonte
+única** dos dados do pedido. Aí o argumento de sigilo praticamente cai: o
+art. 11 da LPI fala do que foi "tornado acessível ao público", e repositório
+privado com acesso controlado não é isso. Compartilhamento interno na equipe do
+projeto não é divulgação pública. E ter tudo em um lugar só costuma valer mais
+do que a arrumação teórica de manter o acervo em outro sistema.
+
+Para versionar, **comente o BLOCO A** do `.gitignore` (as cinco linhas
+marcadas). Mantenha o BLOCO B.
+
+### O risco que sobra, e ele não é sobre hoje
+
+**Histórico de git é permanente e visibilidade é um botão.** Se o repositório
+virar público algum dia — por engano, por mudança de política, por alguém achar
+que "já publicou mesmo" —, tudo o que já foi commitado aparece, **inclusive
+arquivo apagado depois**: `git rm` não remove do histórico.
+
+A assimetria decide: versionar e nunca publicar não custa nada; versionar e
+publicar por engano antes do depósito custa a patente.
+
+### As condições de quem versiona
+
+1. **Decida antes do primeiro commit.** Retroagir exige reescrever histórico,
+   operação chata e fácil de fazer pela metade.
+2. **Escreva no README do repositório do pedido que ele nunca vira público.** É
+   barato, e é o que protege contra o sucessor que não participou da decisão.
+3. **Para publicar algo um dia** — depois da concessão, por exemplo — crie um
+   repositório **novo** com o que deve ser público. Nunca virando o botão deste.
+4. **Derive do template por "Use this template", não por fork.** O template cria
+   repositório **sem histórico**; o fork carrega histórico e vínculo.
+5. **A lista de quem tem acesso é a lista de quem viu a invenção antes do
+   depósito.** Mantenha enxuta — importa se houver disputa de titularidade.
+
+### Duas coisas que ficam de fora mesmo versionando
+
+**`anterioridades/`** (BLOCO B do `.gitignore`, que não se comenta). Patente
+publicada é de acesso livre e não preocupa; artigo de periódico é obra de
+terceiro sob licença que costuma cobrir cópia para uso próprio, não
+redistribuição por repositório de equipe.
+
+**Binário grande.** O git guarda cada versão de arquivo binário por inteiro, sem
+compressão delta: um CAD de 80 MB revisado seis vezes vira meio giga de
+histórico que a equipe inteira clona para sempre. Se houver muito CAD, foto em
+alta ou vídeo, use Git LFS ou deixe esses arquivos fora. Isso é engenharia, não
+norma — mas estraga o dia a dia da equipe, que é justamente o que se quer
+proteger ao centralizar tudo aqui.

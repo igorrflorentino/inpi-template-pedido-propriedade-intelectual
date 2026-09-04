@@ -47,7 +47,17 @@ Daí duas regras:
 
 O template já colabora: a guarda `github.repository` no workflow faz os passos
 só-do-template serem pulados em repositórios derivados, e o `.gitignore` mantém
-o material de origem fora do versionamento.
+o material de origem fora do versionamento **por padrão**.
+
+Esse padrão é invertível, e para um repositório privado a inversão é razoável —
+veja "Versionar ou não o conteúdo" em `material-de-origem/LEIA-ME.md`. Só há uma
+condição que não se negocia: **decida antes do primeiro commit**. Histórico de
+git é permanente e visibilidade é um botão; material commitado e apagado depois
+continua no histórico e aparece inteiro se o repositório algum dia for aberto.
+
+Uma consequência prática: para criar o repositório do pedido, use **"Use this
+template"**, não fork. O template gera repositório sem histórico; o fork carrega
+o histórico e o vínculo com o original.
 
 ---
 
@@ -409,9 +419,10 @@ citação é em prosa pelo número de publicação (art. 27, II).
 Preencha o `NOTAS-PARA-O-AGENTE.md` da pasta. Com o material não classificado,
 esse índice é o mapa por onde o agente começa.
 
-O conteúdo da pasta **não é versionado** (ver o `LEIA-ME.md` dela) — sigilo,
-direito de terceiro, e porque o acervo do projeto pertence ao sistema documental
-da sua instituição.
+O conteúdo da pasta **não é versionado por padrão** (ver "Versionar ou não o
+conteúdo", no `LEIA-ME.md` dela). Em repositório privado, versionar é decisão
+legítima e às vezes melhor — comente o bloco marcado no `.gitignore`, antes do
+primeiro commit. `anterioridades/` fica de fora nos dois casos.
 
 ### As quatro coisas que o agente não pode fazer
 

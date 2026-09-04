@@ -93,7 +93,7 @@ referencias-inpi/            normas e formulários oficiais (só leitura)
 
 ## Redigindo um pedido real a partir do material de origem
 
-Em um repositório **derivado** deste template, o material do inventor fica em `material-de-origem/` — pasta **plana** (o material não vem separado por seção do pedido) com uma única subpasta, `anterioridades/`, cujo critério é a origem do documento, não a seção que ele alimenta. Comece pelo `NOTAS-PARA-O-AGENTE.md` da pasta: com o material não classificado, é ele o mapa. O conteúdo da pasta não é versionado (sigilo — art. 11 da LPI; direito de terceiro sobre as anterioridades).
+Em um repositório **derivado** deste template, o material do inventor fica em `material-de-origem/` — pasta **plana** (o material não vem separado por seção do pedido) com uma única subpasta, `anterioridades/`, cujo critério é a origem do documento, não a seção que ele alimenta. Comece pelo `NOTAS-PARA-O-AGENTE.md` da pasta: com o material não classificado, é ele o mapa. O conteúdo da pasta não é versionado **por padrão** (sigilo — art. 11 da LPI), mas em repositório privado a inversão é decisão legítima do depositante, feita comentando o bloco marcado no `.gitignore` antes do primeiro commit; `anterioridades/` fica fora nos dois casos, por direito de terceiro. **Não altere esse `.gitignore` por conta própria** — é decisão de sigilo do depositante, não de organização de repositório.
 
 Quatro limites que valem mais que qualquer regra de forma deste arquivo:
 
