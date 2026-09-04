@@ -29,6 +29,39 @@
 *.fls
 *.fdb_latexmk
 
+# ---------------------------------------------------------------------------
+# MATERIAL DE ORIGEM — decisão a tomar na CRIAÇÃO do repositório do pedido
+#
+# Padrão: o conteúdo de material-de-origem/ NÃO é versionado; entram no git
+# apenas os dois arquivos de instrução e o marcador de anterioridades/.
+#
+# Para VERSIONAR o seu material — repositório do pedido privado, equipe usando
+# o repositório como fonte única de dados do pedido —, comente as cinco linhas
+# do BLOCO A. Mantenha o BLOCO B como está.
+#
+# DECIDA ANTES DO PRIMEIRO COMMIT. Histórico de git é permanente e visibilidade
+# é um botão: material commitado e apagado depois continua no histórico, e
+# aparece inteiro se o repositório algum dia virar público. A assimetria é
+# brutal — versionar e nunca publicar não custa nada; versionar e publicar por
+# engano antes do depósito custa a patente (art. 11 da LPI).
+#
+# As condições de quem versiona estão em material-de-origem/LEIA-ME.md.
+# ---------------------------------------------------------------------------
+
+# BLOCO A — o seu material. Comente estas cinco linhas para versioná-lo.
+material-de-origem/**
+!material-de-origem/LEIA-ME.md
+!material-de-origem/NOTAS-PARA-O-AGENTE.md
+!material-de-origem/anterioridades/
+!material-de-origem/anterioridades/.gitkeep
+
+# BLOCO B — anterioridades. NÃO comente, mesmo versionando o resto: patente
+# publicada é de acesso livre, mas artigo de periódico é obra de terceiro sob
+# licença que costuma cobrir cópia para uso próprio, não redistribuição por
+# repositório de equipe.
+material-de-origem/anterioridades/**
+!material-de-origem/anterioridades/.gitkeep
+
 # --- Arquivos de sistema operacional ---
 # macOS
 .DS_Store
