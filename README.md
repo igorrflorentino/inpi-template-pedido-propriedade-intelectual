@@ -27,6 +27,30 @@ centralizada na margem superior. Não existe um "documento único" do pedido.
 
 ---
 
+## Antes de começar: sigilo
+
+O art. 11 da LPI considera nova a invenção não compreendida no estado da
+técnica, e o estado da técnica é **tudo o que foi tornado acessível ao público
+antes do depósito**. Um repositório público com a descrição da sua invenção,
+antes de depositar, é divulgação — você destrói a própria novidade.
+
+O período de graça do art. 12 da LPI dá 12 meses de rede de proteção, mas é
+rede, não plano: o art. 11, § 2º da Portaria 14/2024 só aceita, para esse fim,
+divulgação de **documentos não-patentários**.
+
+Daí duas regras:
+
+1. **Um repositório por pedido**, derivado deste template. Não escreva um pedido
+   real dentro do repositório do template.
+2. **Esse repositório é privado** até o depósito — na prática, até a publicação
+   (18 meses, art. 30 da LPI). Não há ganho em abrir antes.
+
+O template já colabora: a guarda `github.repository` no workflow faz os passos
+só-do-template serem pulados em repositórios derivados, e o `.gitignore` mantém
+o material de origem fora do versionamento.
+
+---
+
 ## Por onde começo
 
 1. **Preencha `dados-do-pedido.tex`.** É o único arquivo de metadados: título,
@@ -360,6 +384,56 @@ descrição dela aparece como aviso a conferir à mão.
 
 `--check-only` pula a compilação e verifica os PDFs existentes — é assim que a
 CI o executa, como passo bloqueante.
+
+---
+
+## Trabalhando com um agente de IA
+
+O `CLAUDE.md` deste repositório carrega as regras da norma, então um agente que
+abra o projeto já começa sabendo o que o INPI exige. O que falta é o **seu**
+material e o **seu** enquadramento.
+
+### Onde colocar o material
+
+Em `material-de-origem/`: relatório do projeto, tese, notas, CAD, fotos,
+resultados de ensaio. A pasta é **plana de propósito** — não classifique o
+material por seção do pedido, porque ele não vem separado assim (um relatório
+traz descrição, dados e menção a trabalhos anteriores no mesmo arquivo).
+Nomes de arquivo descritivos valem mais que estrutura de pastas.
+
+A única separação é `material-de-origem/anterioridades/`, e o critério não é
+"que seção isso alimenta" e sim **de quem é o documento**: obra de terceiro,
+sobre a qual vale uma regra distinta — nenhum trecho vai para o pedido, a
+citação é em prosa pelo número de publicação (art. 27, II).
+
+Preencha o `NOTAS-PARA-O-AGENTE.md` da pasta. Com o material não classificado,
+esse índice é o mapa por onde o agente começa.
+
+O conteúdo da pasta **não é versionado** (ver o `LEIA-ME.md` dela) — sigilo,
+direito de terceiro, e porque o acervo do projeto pertence ao sistema documental
+da sua instituição.
+
+### As quatro coisas que o agente não pode fazer
+
+| | |
+| --- | --- |
+| **Inventar dado técnico** | Um modelo de linguagem preenche lacuna com número plausível. Num pedido isso é matéria que não se sustenta no exame (art. 24 da LPI), num documento que você assina. A instrução mais valiosa do seu prompt é "**pare e me pergunte** em vez de preencher". |
+| **Acrescentar matéria fora da origem** | O art. 32 da LPI, regulado pela Resolução INPI/PR nº 93/2013, fecha a porta para incluir matéria depois do requerimento de exame. |
+| **Colar texto de anterioridade** | Citação em prosa, pelo número de publicação (art. 27, II). |
+| **Copiar desenho de origem para `figuras/`** | Print de CAD vem com carimbo e logotipo: o art. 21 proíbe, e o art. 39, I exige figura isenta de texto. A figura final é redesenhada — veja `figuras/fontes-dos-exemplos/`. |
+
+### Peça um mapa de proveniência
+
+Ao final, peça ao agente **qual documento sustentou qual seção ou parágrafo**.
+É o que devolve a rastreabilidade sem obrigar você a classificar o material na
+entrada — e é o que torna a conferência viável.
+
+### O que continua sendo seu
+
+`make verificar` afere **forma**. Não delegue: conferir cada afirmação técnica
+contra a origem; o quadro reivindicatório, cuja decisão de escopo é estratégica
+e jurídica; a busca de anterioridade efetivamente feita e lida; e, num depósito
+real, a passagem pelo setor de PI antes de peticionar.
 
 ---
 

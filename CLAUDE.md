@@ -68,6 +68,7 @@ resumo.tex                   ─┘
 lib/inpitex.sty              todo o estilo e as macros
 pedido/                      o conteúdo redigido
 figuras/                     imagens, consumidas só por desenhos.tex
+material-de-origem/          material do inventor (não versionado)
 referencias-inpi/            normas e formulários oficiais (só leitura)
 ```
 
@@ -89,6 +90,19 @@ referencias-inpi/            normas e formulários oficiais (só leitura)
 **Declaração única das figuras.** `pedido/desenhos/figuras.tex` é lido **duas vezes**, e `\figura` se comporta de um jeito em cada leitura: `\imprimirdescricaodosdesenhos` (no relatório) gera a listagem dos arts. 26, III e 27, V; `\imprimirdesenhos` (em `desenhos.tex`) posiciona as imagens. A troca é feita com `\let\figura\inpi@figuralistagem` / `\let\figura\inpi@figuradesenho`. **Não crie uma segunda lista de figuras** — a congruência de numeração e ordem é garantida por essa fonte única, e o `verificar-conformidade.sh` a confere.
 
 **Guardas de coerência.** Cinco `\PackageError` em `\AtBeginDocument` (para valer em qualquer ordem de preenchimento): natureza inválida, modalidade inválida, certificado de adição em modelo de utilidade (arts. 42 e 43), vínculo ausente em `adicao`/`divisao` (arts. 43, II e 51, II) e título vazio (art. 24). Ao acrescentar campo obrigatório, acrescente a guarda — errar isso silenciosamente custa uma exigência formal do INPI.
+
+## Redigindo um pedido real a partir do material de origem
+
+Em um repositório **derivado** deste template, o material do inventor fica em `material-de-origem/` — pasta **plana** (o material não vem separado por seção do pedido) com uma única subpasta, `anterioridades/`, cujo critério é a origem do documento, não a seção que ele alimenta. Comece pelo `NOTAS-PARA-O-AGENTE.md` da pasta: com o material não classificado, é ele o mapa. O conteúdo da pasta não é versionado (sigilo — art. 11 da LPI; direito de terceiro sobre as anterioridades).
+
+Quatro limites que valem mais que qualquer regra de forma deste arquivo:
+
+1. **Não invente dado técnico.** Faltou informação para uma seção? **Pare e pergunte.** Número plausível preenchido por conta própria é matéria que não se sustenta no exame do art. 24 da LPI, em documento que o depositante assina. Este é o erro mais grave que um agente pode cometer aqui.
+2. **Não acrescente matéria fora do material de origem** (art. 32 da LPI e Resolução INPI/PR nº 93/2013).
+3. **Não transporte texto de `anterioridades/` para o pedido.** Anterioridade se cita em prosa, pelo número de publicação (art. 27, II).
+4. **Não copie desenho de origem para `figuras/`.** Carimbo e logotipo violam o art. 21; o art. 39, I exige figura isenta de texto. A figura é redesenhada — veja `figuras/fontes-dos-exemplos/`.
+
+Ao concluir, entregue um **mapa de proveniência** (qual documento sustentou qual seção ou parágrafo) e rode `make verificar`, relatando os avisos.
 
 ## Convenções de escrita
 
