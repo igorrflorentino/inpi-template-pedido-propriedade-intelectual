@@ -93,7 +93,7 @@ referencias-inpi/            normas e formulários oficiais (só leitura)
 
 ## Redigindo um pedido real a partir do material de origem
 
-Em um repositório **derivado** deste template, o material do inventor fica em `material-de-origem/` — pasta **plana** (o material não vem separado por seção do pedido) com uma única subpasta, `anterioridades/`, cujo critério é a origem do documento, não a seção que ele alimenta. Comece pelo `NOTAS-PARA-O-AGENTE.md` da pasta: com o material não classificado, é ele o mapa. O conteúdo da pasta não é versionado **por padrão** (sigilo — art. 11 da LPI), mas em repositório privado a inversão é decisão legítima do depositante, feita comentando o bloco marcado no `.gitignore` antes do primeiro commit; `anterioridades/` fica fora nos dois casos, por direito de terceiro. **Não altere esse `.gitignore` por conta própria** — é decisão de sigilo do depositante, não de organização de repositório.
+Em um repositório **derivado** deste template, o material do inventor fica em `material-de-origem/` — pasta **plana** (o material não vem separado por seção do pedido) com uma única subpasta, `anterioridades/`, cujo critério é a origem do documento, não a seção que ele alimenta. Comece **lendo a pasta inteira** e monte você mesmo o inventário — o que é cada documento, pelo título e pelo conteúdo, e o que dele se aproveita; apresente esse inventário ao depositante e espere a confirmação antes de redigir. O `NOTAS-PARA-O-AGENTE.md` da pasta **não** é o índice do material: ele carrega o que nenhuma leitura recupera — sobretudo **o que não usar** (versão superada, rascunho, ensaio que não se confirmou), mais as decisões já tomadas e o que está em aberto. Leia-o antes de inventariar e cruze as duas coisas. O conteúdo da pasta não é versionado **por padrão** (sigilo — art. 11 da LPI), mas em repositório privado a inversão é decisão legítima do depositante, feita comentando o bloco marcado no `.gitignore` antes do primeiro commit; `anterioridades/` fica fora nos dois casos, por direito de terceiro. **Não altere esse `.gitignore` por conta própria** — é decisão de sigilo do depositante, não de organização de repositório.
 
 Quatro limites que valem mais que qualquer regra de forma deste arquivo:
 
@@ -102,7 +102,7 @@ Quatro limites que valem mais que qualquer regra de forma deste arquivo:
 3. **Não transporte texto de `anterioridades/` para o pedido.** Anterioridade se cita em prosa, pelo número de publicação (art. 27, II).
 4. **Não copie desenho de origem para `figuras/`.** Carimbo e logotipo violam o art. 21; o art. 39, I exige figura isenta de texto. A figura é redesenhada — veja `figuras/fontes-dos-exemplos/`.
 
-Ao concluir, entregue um **mapa de proveniência** (qual documento sustentou qual seção ou parágrafo) e rode `make verificar`, relatando os avisos.
+Ao concluir, entregue um **mapa de proveniência** (qual documento sustentou qual seção ou parágrafo, fechando o círculo aberto pelo inventário) e rode `make verificar`, relatando os avisos.
 
 ## Convenções de escrita
 
