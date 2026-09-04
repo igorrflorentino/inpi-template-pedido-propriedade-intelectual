@@ -416,8 +416,14 @@ A única separação é `material-de-origem/anterioridades/`, e o critério não
 sobre a qual vale uma regra distinta — nenhum trecho vai para o pedido, a
 citação é em prosa pelo número de publicação (art. 27, II).
 
-Preencha o `NOTAS-PARA-O-AGENTE.md` da pasta. Com o material não classificado,
-esse índice é o mapa por onde o agente começa.
+No `NOTAS-PARA-O-AGENTE.md` da pasta você **não** escreve o que é cada arquivo:
+o agente lê o título e o conteúdo e conclui sozinho. Anote ali só o que nenhuma
+leitura recupera — antes de tudo **o que não usar** (versão superada, rascunho,
+ensaio que não se confirmou), mais o que já está decidido e o que ainda falta.
+
+E peça o inventário **antes** da redação: uma linha por documento, o que é e o
+que dele se aproveita, para você confirmar. Documento lido errado contamina tudo
+o que vier depois, e corrigir na entrada custa um minuto.
 
 O conteúdo da pasta **não é versionado por padrão** (ver "Versionar ou não o
 conteúdo", no `LEIA-ME.md` dela). Em repositório privado, versionar é decisão
@@ -436,8 +442,9 @@ primeiro commit. `anterioridades/` fica de fora nos dois casos.
 ### Peça um mapa de proveniência
 
 Ao final, peça ao agente **qual documento sustentou qual seção ou parágrafo**.
-É o que devolve a rastreabilidade sem obrigar você a classificar o material na
-entrada — e é o que torna a conferência viável.
+É o inventário da entrada fechando o círculo: devolve a rastreabilidade sem
+obrigar você a classificar o material antes, e é o que torna a conferência
+viável.
 
 ### O que continua sendo seu
 

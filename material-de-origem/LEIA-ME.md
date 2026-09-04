@@ -5,8 +5,8 @@ tese, notas de laboratório, desenhos de CAD, fotos, resultados de ensaio,
 apresentações, o que for. É a matéria-prima de onde as quatro peças do pedido
 são redigidas.
 
-Nada desta pasta é compilado pelo LaTeX, e **nada dela é versionado** — veja
-"Por que o conteúdo não vai para o git", adiante.
+Nada desta pasta é compilado pelo LaTeX, e nada dela é versionado **por
+padrão** — veja "Versionar ou não o conteúdo: a decisão", adiante.
 
 ## Jogue os arquivos aqui, sem classificar
 
@@ -44,10 +44,18 @@ reivindicá-la. Por isso essa pasta existe, e por isso ela é a única.
 
 ## `NOTAS-PARA-O-AGENTE.md`
 
-Com a pasta plana, esse arquivo é a peça mais importante daqui. É o índice que
-**você** escreve: o que é cada documento, o que já está decidido, o que está em
-aberto. Há um modelo ao lado deste arquivo — preencha-o antes de acionar o
-agente.
+Esse arquivo **não é o índice do material**. Quem lê os arquivos e conclui o que
+cada um é, pelo título e pelo conteúdo, é o agente — inventário escrito à mão é
+trabalho que ele faz melhor, e que envelhece a cada arquivo novo que você joga
+aqui. O fluxo é o inverso: o agente inventaria a pasta e devolve o inventário
+para você conferir antes de redigir.
+
+O que fica no arquivo é só o que **nenhuma leitura recupera**, e o essencial é
+uma coisa: **o que não usar**. Nada dentro do `relatorio.pdf` diz que o
+`relatorio-v2.pdf` o substituiu; nada no capítulo de ensaios avisa que aquela
+série não se confirmou depois. Junte a isso o que já está decidido (natureza,
+modalidade, título, categorias) e o que você sabe que ainda falta. Há um modelo
+ao lado deste arquivo.
 
 ## Versionar ou não o conteúdo: a decisão
 

@@ -1,19 +1,29 @@
 # Notas para o agente
 
-> Modelo. Preencha antes de pedir a um agente de IA que redija as peças, e
-> apague o que não se aplicar. Como o material desta pasta não é classificado
-> por seção, este arquivo é o mapa — é por ele que o agente começa.
+> Modelo. Preencha o que se aplicar, apague o resto, deixe o arquivo aqui.
+>
+> **Não escreva aqui o inventário do material.** Quem lê os arquivos e conclui
+> o que cada um é, pelo título e pelo conteúdo, é o agente — e ele faz isso
+> melhor do que você faria à mão. Este arquivo guarda só o que **nenhuma
+> leitura recupera**.
 
-## 1. O que é cada documento
+## 1. O que NÃO usar
 
-| Arquivo | O que é | O que aproveitar |
-| --- | --- | --- |
-| `relatorio-final-projeto-XXX.pdf` | Relatório final do projeto | Descrição do objeto (cap. 3) e ensaios (cap. 5) |
-| `anterioridades/BR-10-2015-XXXXXX.pdf` | Patente encontrada na busca | Só para citar em prosa, pelo número |
-| | | |
+A parte mais importante daqui, e a única que o agente não tem como descobrir
+sozinho. Documento superado continua parecendo válido para quem o lê pela
+primeira vez: nada dentro do `relatorio.pdf` diz que o `relatorio-v2.pdf` o
+substituiu, e nada no capítulo de ensaios avisa que aquela série não se
+confirmou depois. Dado invalidado dentro de um pedido é exatamente a matéria
+que não se sustenta no exame (art. 24 da LPI).
 
-Diga também o que **não** aproveitar: versão superada, rascunho, dado de ensaio
-que não se confirmou. O agente não tem como adivinhar.
+Liste o que está na pasta mas está fora:
+
+- `<arquivo>` — superado por `<arquivo>`; use só o segundo.
+- `<arquivo>` — rascunho, nunca revisado; ignore.
+- `<seção, tabela ou ensaio>` de `<arquivo>` — resultado não se confirmou.
+- ...
+
+Se não houver nada nessa condição, escreva "nada" — também é informação útil.
 
 ## 2. Decisões já tomadas
 
@@ -35,6 +45,11 @@ inventar.
 
 Copie estas no seu prompt, ou aponte o agente para cá:
 
+- **Comece inventariando a pasta.** Leia todos os arquivos, `anterioridades/`
+  inclusive, e devolva uma linha por documento: o que ele é e o que dele se
+  aproveita. Confira contra a seção 1 acima e **espere minha confirmação**
+  antes de começar a redigir. Documento lido errado contamina tudo o que vier
+  depois; corrigir o inventário custa um minuto.
 - **Não invente nenhum dado técnico.** Se faltar informação para uma seção,
   **pare e pergunte** em vez de preencher com valor plausível. Um número
   inventado num pedido de patente é matéria que não se sustenta no exame
@@ -49,6 +64,6 @@ Copie estas no seu prompt, ou aponte o agente para cá:
   texto, com apenas termos indicativos e sinais de referência. Proponha o que
   cada figura precisa mostrar; a figura final é redesenhada.
 - **Ao terminar, entregue um mapa de proveniência**: qual documento desta pasta
-  sustentou qual seção ou parágrafo do relatório. É o que me permite conferir
-  sem reler tudo.
+  sustentou qual seção ou parágrafo do relatório. É o inventário da primeira
+  regra fechando o círculo, e é o que me permite conferir sem reler tudo.
 - **Rode `make verificar` e relate os avisos.**
