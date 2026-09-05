@@ -364,7 +364,11 @@ make comparacao     # produz relatorio-descritivo-comparacao.pdf etc.
 
 O script injeta o modo por linha de comando e **não altera
 `dados-do-pedido.tex`** — assim não há como anexar ao peticionamento a versão
-marcada por descuido. Como reforço, `make verificar` recusa a verificação se
+marcada por descuido. Ele também confere se alguma linha da cópia transbordou a
+caixa de texto: o `ulem` não hifeniza o que está dentro de tachado ou
+sublinhado, e em português um trecho marcado no fim da linha pode não ter onde
+quebrar. A cópia de comparação acompanha a petição, então texto fora da margem
+ali é defeito de forma como em qualquer outra peça. Como reforço, `make verificar` recusa a verificação se
 alguém deixar `\CopiaDeComparacao{sim}` no arquivo, porque nesse caso os PDFs do
 pedido sairiam marcados, contra o art. 57, I.
 

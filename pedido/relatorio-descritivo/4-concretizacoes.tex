@@ -51,12 +51,20 @@ pressão de linha de 200 kPa. Os resultados estão reunidos na Tabela 1.
 
 \begin{tabelainpi}{Energia consumida por ciclo de acionamento e pressão mínima
 de fechamento}
-    % Colunas de largura fixa (L/R do lib/inpitex), somando menos que
+    % Colunas de largura fixa (L/R/C do lib/inpitex), somando menos que
     % \linewidth: com 'lrr' esta tabela ficaria 2 cm mais larga que a caixa de
-    % texto e imprimiria por cima da margem.
-    \begin{tabular}{@{}L{0.46\linewidth}R{0.22\linewidth}R{0.22\linewidth}@{}}
+    % texto e imprimiria por cima da margem. As larguras foram medidas para o
+    % número de publicação caber inteiro numa linha — quebrar "BR 10 2015
+    % 000000 0" no meio atrapalha a leitura do documento citado.
+    %
+    % O \tabcolsep menor devolve 8 pt à largura útil, o que é o que faz as três
+    % colunas caberem. Fica restrito a esta tabela: o tabelainpi abre um grupo.
+    \setlength{\tabcolsep}{4pt}%
+    \begin{tabular}{@{}L{0.552\linewidth}R{0.198\linewidth}R{0.194\linewidth}@{}}
         \toprule
-        Conjunto ensaiado & Energia por ciclo (J) & Pressão mínima (kPa) \\
+        Conjunto ensaiado
+            & \multicolumn{1}{C{0.198\linewidth}}{Energia por ciclo (J)}
+            & \multicolumn{1}{C{0.194\linewidth}}{Pressão mínima (kPa)} \\
         \midrule
         Acionamento direto (BR 10 2015 000000 0)    & 216{,}0 & 0   \\
         Acionamento hidráulico (US 2018/0123456 A1) & 4{,}8   & 120 \\

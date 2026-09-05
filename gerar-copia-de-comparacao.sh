@@ -39,9 +39,33 @@ for peca in "${PECAS[@]}"; do
         "${peca}.tex" > /dev/null
 done
 
+# A cópia de comparação também é peça que acompanha a petição, então também não
+# pode sair com texto por cima da margem. E ela é mais suscetível que o
+# documento do pedido: o ulem não hifeniza o que está dentro de \sout e \uline,
+# de modo que um trecho marcado no fim da linha pode não ter onde quebrar. O
+# lib/inpitex já afrouxa o espacejamento no modo comparação para evitar isso;
+# esta conferência existe para o caso em que a folga não bastar.
+#
+# O verificar-conformidade.sh cuida das quatro peças do pedido; estes PDFs são
+# gerados aqui e é aqui que se conferem.
+TRANSBORDOU=0
+for peca in "${PECAS[@]}"; do
+    log="${peca}-comparacao.log"
+    [ -f "$log" ] || continue
+    while IFS= read -r linha; do
+        printf 'AVISO: %s-comparacao: %s\n' "$peca" "$linha" >&2
+        TRANSBORDOU=1
+    done < <(grep -o 'Overfull \\[hv]box ([0-9.]*pt too [a-z]*)' "$log" || true)
+done
+
 echo
 echo "Concluído. Cópias de comparação geradas:"
 ls -1 ./*-comparacao.pdf
+if [ "$TRANSBORDOU" -eq 1 ]; then
+    echo
+    echo "ATENÇÃO: alguma linha transbordou a caixa de texto (avisos acima)."
+    echo "Confira os PDFs antes de anexar: texto fora da margem é defeito de forma."
+fi
 echo
 echo "Lembre-se: estes arquivos acompanham a petição (art. 57, II)."
 echo "Os documentos do pedido são os de 'make pdf', sem sinalização (art. 57, I)."

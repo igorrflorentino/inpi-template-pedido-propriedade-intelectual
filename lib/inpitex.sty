@@ -419,6 +419,12 @@
 %         \reivindicacao COMPOSIÇÃO ..., caracterizada por ...
 %         \reivindicacao COMPOSIÇÃO ..., de acordo com a reivindicação 1, ...
 %     \end{quadroreivindicatorio}
+%
+% leftmargin e labelwidth são deliberadamente iguais, com labelsep por cima: o
+% enumitem resolve a sobredeterminação a favor do leftmargin, e o resultado é o
+% recuo pendente dos formulários oficiais (AppBody-Claim: left=714, hanging=357
+% twips, ou seja 1,26 cm com rótulo de 0,63 cm). Está conferido contra o PDF
+% gerado — não "corrija" a aritmética sem olhar a saída.
 \newlist{quadroreivindicatorio}{enumerate}{1}
 \setlist[quadroreivindicatorio]{
     label=\arabic*.,
@@ -478,6 +484,18 @@
     \ifdefstring{\inpi@modocomparacao}{sim}{%
         \copiadecomparacaotrue
         \renewcommand{\inpi@marcadecomparacao}{\footnotesize CÓPIA DE COMPARAÇÃO}%
+        % O ulem NÃO hifeniza o que está dentro de \sout e \uline. Num idioma de
+        % palavras longas como o português, um trecho marcado que caia no fim da
+        % linha não tem onde quebrar e a linha transborda a caixa de texto — o
+        % LaTeX só avisa, e a cópia de comparação sai com texto por cima da
+        % margem. A cópia de comparação também é peça que acompanha a petição
+        % (art. 57, II), então isso não é aceitável ali.
+        %
+        % O \emergencystretch dá ao TeX folga extra para esticar os espaços numa
+        % última tentativa, antes de deixar a linha estourar. Vale só no modo
+        % comparação: no documento do pedido a hifenização funciona normalmente
+        % e não há razão para afrouxar o espacejamento.
+        \setlength{\emergencystretch}{3em}%
     }{%
         \ifdefstring{\inpi@modocomparacao}{nao}{%
             \copiadecomparacaofalse
