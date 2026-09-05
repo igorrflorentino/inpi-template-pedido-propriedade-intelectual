@@ -59,10 +59,16 @@ Copie estas no seu prompt, ou aponte o agente para cá:
   matéria depois do requerimento de exame.
 - **Anterioridade se cita em prosa, pelo número de publicação.** Nada de colar
   trecho de documento de `anterioridades/`.
-- **Não copie desenho de origem para `figuras/`.** Print de CAD vem com carimbo,
-  logotipo e legenda — o art. 21 proíbe, e o art. 39, I exige figura isenta de
-  texto, com apenas termos indicativos e sinais de referência. Proponha o que
-  cada figura precisa mostrar; a figura final é redesenhada.
+- **Nunca crie, gere ou redesenhe uma imagem para `figuras/`** — nem copiando
+  desenho de origem, nem com TikZ, nem por qualquer outro meio. Print de CAD
+  vem com carimbo, logotipo e legenda — o art. 21 proíbe, e o art. 39, I exige
+  figura isenta de texto, com apenas termos indicativos e sinais de
+  referência. Falta o desenho de uma figura necessária? Diga o que ela
+  precisa mostrar e peça que eu a traga — veja `figuras/LEIA-ME.md`.
+- **Prefira faixa a valor fechado em grandeza numérica.** Medida, proporção,
+  temperatura, tempo: valor fechado protege só aquele número exato, faixa
+  protege toda a amplitude. Só vale quando o material sustentar a variação —
+  se houver só um valor pontual, pergunte antes de arbitrar os extremos.
 - **Ao terminar, entregue um mapa de proveniência**: qual documento desta pasta
   sustentou qual seção ou parágrafo do relatório. É o inventário da primeira
   regra fechando o círculo, e é o que me permite conferir sem reler tudo.

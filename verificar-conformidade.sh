@@ -396,23 +396,32 @@ fi
 # o relatório e os desenhos devem ser consistentes entre si.
 #
 # É heurística de fonte, por isso NÃO bloqueia: o script compara os sinais
-# "(N)" citados no relatório e nas reivindicações com os declarados nas
-# descrições das figuras. Ele não vê o interior das imagens — se um sinal está
-# desenhado na figura mas não citado na descrição dela, aparece aqui como aviso
-# a conferir à mão.
+# "(N)" citados no relatório e nas reivindicações com os declarados do lado
+# das figuras. Ele não vê o interior das imagens — se um sinal está desenhado
+# na figura mas não citado do lado das figuras, aparece aqui como aviso a
+# conferir à mão.
+#
+# "Declarados do lado das figuras" soma DUAS fontes: pedido/desenhos/
+# figuras.tex (a frase única de cada figura, que só cita o sinal mais
+# relevante — art. 27, V pede descrição breve) e, se existir,
+# figuras/sinais-de-referencia.md (o glossário completo de sinais que o
+# depositante preenche, sem o limite de brevidade da frase impressa no PDF).
+# Some as duas: nenhuma das duas sozinha é obrigada a listar todo sinal.
 # ---------------------------------------------------------------------------
 secao "Sinais de referência (advisory)"
 sinais_texto=$(grep -oh '([0-9]\{1,3\})' "$TMP/relatorio-descritivo.norm.txt" "$TMP/reivindicacoes.norm.txt" \
     | tr -d '()' | sort -un)
-sinais_figuras=$(grep -o '([0-9]\{1,3\})' pedido/desenhos/figuras.tex \
+fontes_sinais_figuras=(pedido/desenhos/figuras.tex)
+[ -f figuras/sinais-de-referencia.md ] && fontes_sinais_figuras+=(figuras/sinais-de-referencia.md)
+sinais_figuras=$(grep -oh '([0-9]\{1,3\})' "${fontes_sinais_figuras[@]}" \
     | tr -d '()' | sort -un)
 so_no_texto=$(comm -23 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | grep -c . || true)
 so_nas_figuras=$(comm -13 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | grep -c . || true)
 if [ "$so_no_texto" -eq 0 ] && [ "$so_nas_figuras" -eq 0 ]; then
-    ok "os sinais de referência do texto e das descrições de figura coincidem"
+    ok "os sinais de referência do texto e do lado das figuras coincidem"
 else
-    [ "$so_no_texto" -gt 0 ] && aviso "sinais citados no texto e ausentes das descrições de figura: $(comm -23 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | tr '\n' ' ')"
-    [ "$so_nas_figuras" -gt 0 ] && aviso "sinais nas descrições de figura e ausentes do texto: $(comm -13 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | tr '\n' ' ')"
+    [ "$so_no_texto" -gt 0 ] && aviso "sinais citados no texto e ausentes do lado das figuras: $(comm -23 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | tr '\n' ' ')"
+    [ "$so_nas_figuras" -gt 0 ] && aviso "sinais do lado das figuras e ausentes do texto: $(comm -13 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | tr '\n' ' ')"
 fi
 
 # ---------------------------------------------------------------------------

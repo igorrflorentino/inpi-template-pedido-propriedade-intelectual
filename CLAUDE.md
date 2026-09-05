@@ -67,7 +67,7 @@ desenhos.tex                  │
 resumo.tex                   ─┘
 lib/inpitex.sty              todo o estilo e as macros
 pedido/                      o conteúdo redigido
-figuras/                     imagens, consumidas só por desenhos.tex
+figuras/                     imagens prontas, consumidas só por desenhos.tex
 material-de-origem/          material do inventor (não versionado)
 referencias-inpi/            normas e formulários oficiais (só leitura)
 ```
@@ -100,7 +100,7 @@ Quatro limites que valem mais que qualquer regra de forma deste arquivo:
 1. **Não invente dado técnico.** Faltou informação para uma seção? **Pare e pergunte.** Número plausível preenchido por conta própria é matéria que não se sustenta no exame do art. 24 da LPI, em documento que o depositante assina. Este é o erro mais grave que um agente pode cometer aqui.
 2. **Não acrescente matéria fora do material de origem** (art. 32 da LPI e Resolução INPI/PR nº 93/2013).
 3. **Não transporte texto de `anterioridades/` para o pedido.** Anterioridade se cita em prosa, pelo número de publicação (art. 27, II).
-4. **Não copie desenho de origem para `figuras/`.** Carimbo e logotipo violam o art. 21; o art. 39, I exige figura isenta de texto. A figura é redesenhada — veja `figuras/fontes-dos-exemplos/`.
+4. **Nunca crie, gere ou redesenhe uma imagem para `figuras/`** — nem copiando desenho de origem, nem com TikZ, nem por qualquer outro meio. Carimbo e logotipo de um print de CAD violam o art. 21; o art. 39, I exige figura isenta de texto. A imagem final só entra em `figuras/` trazida por quem redige o pedido — veja `figuras/LEIA-ME.md`. Falta o desenho de uma figura necessária? Pare e peça ao depositante, como faltaria qualquer outro dado técnico (limite 1).
 
 Ao concluir, entregue um **mapa de proveniência** (qual documento sustentou qual seção ou parágrafo, fechando o círculo aberto pelo inventário) e rode `make verificar`, relatando os avisos.
 
@@ -123,6 +123,8 @@ Ao concluir, entregue um **mapa de proveniência** (qual documento sustentou qua
 **Verificação bidirecional dos sinais de referência.** O aviso do `verificar-conformidade.sh` é heurístico e não-bloqueante: ele compara os sinais `(N)` citados no relatório e nas reivindicações com os declarados nas descrições das figuras, mas **não vê o interior das imagens**. O agente que trabalhar neste repositório deve fechar as duas pontas por conta própria e **corrigir**, garantindo que: (a) todo sinal citado no texto exista em alguma figura; (b) todo sinal desenhado nas figuras seja citado no texto; e (c) o mesmo sinal designe sempre o mesmo elemento (art. 23, IV; art. 39, IV). Faça isso sempre que mexer em desenhos, em sinais de referência ou ao concluir um trabalho.
 
 **Fundamentação das reivindicações.** Ao editar o quadro reivindicatório ou o relatório, confira que **toda** característica pleiteada está descrita e concretizada no relatório descritivo (arts. 24 e 25 da LPI; art. 29, VI). É a causa mais comum de indeferimento, e vale mesmo quando o objeto é realmente novo e inventivo. Confira também o inverso: matéria no quadro que não aparece no relatório (Resolução INPI/PR nº 124/2013, itens 3.96 e 3.97).
+
+**Grandezas numéricas em faixa, não em valor fechado.** Ao descrever medida, proporção, temperatura, tempo ou qualquer outra grandeza no relatório descritivo ou no quadro reivindicatório, prefira expressá-la como faixa ou amplitude ("entre X e Y") a um valor fechado, sempre que o material de origem sustentar a variação: valor fechado protege só aquele número exato, e faixa protege toda a amplitude reivindicada. Isso não é exceção ao limite de não inventar dado técnico — se o material só traz um valor pontual e não há como saber se ele admite variação, pergunte ao depositante em vez de arbitrar os extremos da faixa.
 
 **Título e categorias.** Ao mudar as categorias de reivindicação, ajuste o título (art. 25 e Resolução 124/2013, item 1.02). Se o quadro deixa de ter reivindicação de processo, "E PROCESSO DE ..." tem de sair do título — e ele muda em **um só lugar**, `dados-do-pedido.tex`.
 
