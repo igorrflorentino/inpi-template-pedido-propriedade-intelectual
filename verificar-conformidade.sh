@@ -23,7 +23,16 @@ set -uo pipefail
 cd "$(dirname "$0")"
 
 APENAS_VERIFICAR=0
-[ "${1:-}" = "--check-only" ] && APENAS_VERIFICAR=1
+case "$#:${1:-}" in
+    0:)             ;;
+    1:--check-only) APENAS_VERIFICAR=1 ;;
+    *)
+        printf 'Uso: %s [--check-only]\n' "$0" >&2
+        printf '  sem argumento   compila as quatro peças e verifica\n' >&2
+        printf '  --check-only    verifica os PDFs já existentes\n' >&2
+        exit 2
+        ;;
+esac
 
 PECAS=(relatorio-descritivo reivindicacoes desenhos resumo)
 FALHAS=0
@@ -97,6 +106,95 @@ if [ "${FALTA_PDF:-0}" -eq 1 ]; then
     printf '\n%s\n' "Abortado: gere os PDFs antes de verificar (make pdf)."
     exit 1
 fi
+
+# ---------------------------------------------------------------------------
+# Transbordamento de caixa — matéria que a fonte tem e o PDF não
+#
+# Esta é a checagem mais importante do script, e a menos óbvia. O LaTeX trata
+# transbordamento como AVISO, não como erro: o -halt-on-error não pega, o
+# latexmk devolve status 0 e o PDF sai "com sucesso". Só que:
+#
+#   Overfull \vbox   material empurrado para FORA da página. Uma tabela mais
+#                    alta que a página perde as linhas excedentes — elas
+#                    simplesmente não existem no PDF que você anexa ao
+#                    peticionamento. Matéria escrita e não entregue é o erro
+#                    mais caro que este template poderia deixar passar.
+#   Overfull \hbox   tinta impressa fora da caixa de texto, por cima da margem.
+#
+# Por isso é FALHA aqui, e não aviso. Abaixo de 2 pt (0,7 mm) o excesso é
+# invisível na página impressa e vira apenas AVISO, para o script não implicar
+# com o que ninguém enxerga.
+#
+# Os .log vêm da compilação: no modo --check-only são os do build anterior (na
+# CI, os que a latex-action deixou). Sem o .log a checagem não roda e diz isso.
+# ---------------------------------------------------------------------------
+secao "Transbordamento e margens — matéria fora da página ou fora da caixa"
+for peca in "${PECAS[@]}"; do
+    if [ ! -f "$peca.log" ]; then
+        aviso "$peca.log não existe — transbordamento não verificado (rode sem --check-only)"
+        continue
+    fi
+    resultado=$(python3 - "$peca.log" "$peca" <<'PY'
+import re, sys
+
+caminho, peca = sys.argv[1], sys.argv[2]
+texto = open(caminho, encoding='utf-8', errors='replace').read()
+
+# "Overfull \vbox (774.38286pt too high) has occurred while \output is active"
+# "Overfull \hbox (56.44218pt too wide) in paragraph at lines 57--66"
+graves, leves = [], []
+for m in re.finditer(r'Overfull \\([hv])box \(([0-9.]+)pt too (?:wide|high)\)(.*)', texto):
+    tipo, excesso, onde = m.group(1), float(m.group(2)), m.group(3).strip()
+    onde = re.sub(r'\s+', ' ', onde)[:70]
+    if tipo == 'v' or excesso > 2.0:
+        graves.append((tipo, excesso, onde))
+    else:
+        leves.append((tipo, excesso, onde))
+
+for tipo, excesso, onde in graves:
+    causa = ('matéria empurrada para fora da página'
+             if tipo == 'v' else 'texto impresso fora da margem')
+    print(f'FALHA|{peca}: Overfull \\{tipo}box de {excesso:.1f}pt — {causa} {onde}')
+for tipo, excesso, onde in leves:
+    print(f'AVISO|{peca}: Overfull \\{tipo}box de {excesso:.1f}pt (menos de 2pt) {onde}')
+
+# O próprio pacote de estilo reclama, no .log, de figura cuja margem lateral
+# sai da faixa do art. 38, I. É a única checagem que precisa medir a figura
+# COMPOSTA, coisa que só o TeX sabe fazer — daqui só dá para colher o aviso e
+# promovê-lo a falha, que é o peso que a norma lhe dá.
+# O bloco vai até a primeira linha em branco. Não dá para juntar linha a linha
+# pelo prefixo "(inpitex)": o pdflatex quebra a saída em 79 colunas, e a
+# continuação de uma linha longa vem sem prefixo nenhum — foi o que truncava a
+# mensagem em "84 mm de margem l".
+#
+# São DUAS quebras diferentes e elas não podem ser tratadas do mesmo jeito:
+# a de \MessageBreak vem como "\n(inpitex)   " e vale um espaço; a do
+# max_print_line corta a linha em 79 colunas SEM espaço nenhum, no meio da
+# palavra, e tem de ser costurada sem inserir nada — senão a mensagem sai com
+# "margem l ateral".
+avisos_pacote = []
+for m in re.finditer(r'Package inpitex Warning: (Art\. 38.*?)(?=\n[ \t]*\n)',
+                     texto, re.S):
+    limpo = re.sub(r'\n\(inpitex\)[ \t]*', ' ', m.group(1))
+    limpo = limpo.replace('\n', '')
+    limpo = re.sub(r'[ \t]+', ' ', limpo).strip()
+    limpo = re.sub(r'\s*on input line \d+\.?$', '', limpo)
+    avisos_pacote.append(limpo)
+for limpo in avisos_pacote:
+    print(f'FALHA|{peca}: {limpo}')
+
+if not graves and not leves and not avisos_pacote:
+    print(f'OK|{peca}: nenhuma caixa transbordada e nenhuma figura fora da margem')
+PY
+    )
+    while IFS='|' read -r nivel mensagem; do
+        case "$nivel" in
+            OK)    ok    "$mensagem" ;;
+            AVISO) aviso "$mensagem" ;;
+            *)     falha "$mensagem" ;;
+        esac
+    done <<< "$resultado"
+done
 
 # Texto extraído de cada peça, uma vez, reaproveitado pelas checagens.
 #
@@ -190,7 +288,12 @@ secao "Arts. 19 e 21 — sem representação gráfica fora do documento de desen
 #     aponta o arquivo e a linha.
 # (b) NO PDF. Pega imagem rasterizada que tenha chegado ao PDF por outro
 #     caminho, sem um \includegraphics visível nos arquivos de conteúdo.
-COMANDOS_GRAFICOS='\\includegraphics|\\figura|\\imprimirdesenhos|\\imprimirdescricaodosdesenhos|begin\{tikzpicture\}|begin\{figure\}'
+#
+# \imprimirdescricaodosdesenhos NÃO entra nesta lista, embora tenha "desenhos"
+# no nome: ela imprime a listagem textual dos arts. 26, III e 27, V, sem
+# nenhuma imagem. Chamá-la de comando gráfico era acusar de violar o art. 19
+# justamente a macro que existe para cumpri-lo.
+COMANDOS_GRAFICOS='\\includegraphics|\\figura\b|\\imprimirdesenhos|begin\{tikzpicture\}|begin\{figure\}'
 declare -A FONTES_DA_PECA=(
     [relatorio-descritivo]='pedido/relatorio-descritivo'
     [reivindicacoes]='pedido/reivindicacoes'
@@ -237,8 +340,42 @@ else
     printf '           relatório: %s\n' "$t_rd"
     printf '           resumo   : %s\n' "$t_re"
 fi
-n_titulo=$(printf '%s' "$t_rd" | wc -m | tr -d ' ')
-if [ "$n_titulo" -le 500 ]; then
+# O LIMITE DE 500 CARACTERES SE MEDE NA FONTE, NÃO NO PDF.
+#
+# A comparação acima usa o texto extraído do PDF sem espaço nenhum, porque o
+# pdftotext inventa espaço de kerning ("VÁL VULA") e sem isso a igualdade do
+# art. 24, IV nunca fecharia. Só que essa mesma string não serve para CONTAR:
+# um título de 505 caracteres perde uns 65 espaços e passa como 439. Somando a
+# isso, `wc -m` sem locale UTF-8 (o padrão em contêiner e no runner da CI) conta
+# BYTES, e cada acento vale dois — "VÁLVULA" daria 8.
+#
+# O art. 24, I mede o título como ele foi escrito, e ele é escrito uma vez só,
+# em dados-do-pedido.tex. É de lá que a contagem sai, em caracteres Unicode.
+n_titulo=$(python3 - dados-do-pedido.tex <<'PY'
+import re, sys
+
+fonte = open(sys.argv[1], encoding='utf-8').read()
+marca = r'\providecommand{\TituloDoPedido}{'
+i = fonte.find(marca)
+if i < 0:
+    print(-1)
+    raise SystemExit
+# Fecha as chaves contando profundidade: o título pode ocupar várias linhas.
+j, nivel = i + len(marca), 1
+while j < len(fonte) and nivel:
+    if fonte[j] == '{':
+        nivel += 1
+    elif fonte[j] == '}':
+        nivel -= 1
+    j += 1
+titulo = fonte[i + len(marca):j - 1]
+# A quebra de linha da fonte vira um espaço no documento composto.
+print(len(re.sub(r'\s+', ' ', titulo).strip()))
+PY
+)
+if [ "$n_titulo" -lt 0 ]; then
+    aviso "não foi possível ler \\TituloDoPedido em dados-do-pedido.tex — limite do art. 24, I não verificado"
+elif [ "$n_titulo" -le 500 ]; then
     ok "título com $n_titulo caracteres (máximo 500 — art. 24, I)"
 else
     falha "título com $n_titulo caracteres, acima do máximo de 500 (art. 24, I)"
@@ -268,7 +405,12 @@ fi
 #                         relatório e no documento de desenhos
 # ---------------------------------------------------------------------------
 secao "Arts. 26, III e 39, V — congruência das figuras"
-n_declaradas=$(grep -c '^[[:space:]]*\\figura' pedido/desenhos/figuras.tex || true)
+# Conta CHAMADAS de \figura, não linhas: `grep -c` contaria "\figura{a}{..}
+# \figura{b}{..}" na mesma linha como uma só, e a congruência acusaria falha
+# fantasma. O sed antes tira os comentários, senão o bloco-guia do topo do
+# arquivo — que cita \figura para explicar o uso — entraria na conta.
+n_declaradas=$(sed 's/\([^\\]\)%.*$/\1/; s/^%.*$//' pedido/desenhos/figuras.tex \
+    | grep -o '\\figura\b' | wc -l | tr -d ' ')
 n_listadas=$(grep -o 'A Figura [0-9]\{1,3\} apresenta' "$TMP/relatorio-descritivo.norm.txt" | wc -l | tr -d ' ')
 n_desenhadas=$(grep -c '^[[:space:]]*Figura [0-9]\{1,3\}[[:space:]]*$' "$TMP/desenhos.txt" || true)
 if [ "$n_declaradas" -eq "$n_listadas" ] && [ "$n_declaradas" -eq "$n_desenhadas" ]; then
@@ -292,7 +434,13 @@ fi
 secao "Art. 28 — forma das reivindicações"
 # Extrai o quadro reivindicatório: do cabeçalho em diante, uma reivindicação
 # por número no início de linha.
-python3 - "$TMP/reivindicacoes.norm.txt" "$NATUREZA" <<'PY'
+#
+# O bloco devolve as linhas no formato "NIVEL|mensagem", como as demais
+# checagens, em vez de imprimir direto. Antes ele imprimia, e o shell somava 1
+# a FALHAS pelo codigo de saida, qualquer que fosse o numero de defeitos: duas
+# reivindicacoes com dois pontos finais eram relatadas e o rodape anunciava
+# "1 FALHA(S)".
+resultado_reiv=$(python3 - "$TMP/reivindicacoes.norm.txt" "$NATUREZA" <<'PY'
 import re, sys
 
 caminho, natureza = sys.argv[1], sys.argv[2]
@@ -313,15 +461,16 @@ for i in range(1, len(partes) - 1, 2):
     reivs.append((numero, corpo))
 
 falhas = 0
-def ok(m):    print(f'  OK     {m}')
+def ok(m):
+    print(f'OK|{m}')
 def falha(m):
     global falhas
-    print(f'  FALHA  {m}')
+    print(f'FALHA|{m}')
     falhas += 1
 
 if not reivs:
     falha('nenhuma reivindicação encontrada no PDF')
-    sys.exit(2)
+    sys.exit(0)
 
 # Art. 28, I — numeradas consecutivamente em algarismos arábicos.
 numeros = [n for n, _ in reivs]
@@ -358,9 +507,15 @@ if natureza == 'modelo-de-utilidade':
 else:
     ok(f'{len(independentes)} reivindicação(ões) independente(s): {independentes}')
 
-sys.exit(1 if falhas else 0)
 PY
-[ $? -ne 0 ] && FALHAS=$((FALHAS + 1))
+)
+while IFS='|' read -r nivel mensagem; do
+    [ -z "$nivel" ] && continue
+    case "$nivel" in
+        OK) ok "$mensagem" ;;
+        *)  falha "$mensagem" ;;
+    esac
+done <<< "$resultado_reiv"
 
 # ---------------------------------------------------------------------------
 # Art. 40 — resumo: 50 a 200 palavras, não excedendo uma página
@@ -395,34 +550,144 @@ fi
 # 2.29 e 4.01: os sinais de referência devem ser uniformes em todo o pedido, e
 # o relatório e os desenhos devem ser consistentes entre si.
 #
-# É heurística de fonte, por isso NÃO bloqueia: o script compara os sinais
-# "(N)" citados no relatório e nas reivindicações com os declarados do lado
-# das figuras. Ele não vê o interior das imagens — se um sinal está desenhado
-# na figura mas não citado do lado das figuras, aparece aqui como aviso a
-# conferir à mão.
+# É heurística de fonte, por isso NÃO bloqueia: o script não vê o interior das
+# imagens. O que ele consegue conferir é o triângulo
 #
-# "Declarados do lado das figuras" soma DUAS fontes: pedido/desenhos/
-# figuras.tex (a frase única de cada figura, que só cita o sinal mais
-# relevante — art. 27, V pede descrição breve) e, se existir,
-# figuras/sinais-de-referencia.md (o glossário completo de sinais que o
-# depositante preenche, sem o limite de brevidade da frase impressa no PDF).
-# Some as duas: nenhuma das duas sozinha é obrigada a listar todo sinal.
+#   texto (relatório + reivindicações)  ×  frase de cada figura em
+#   pedido/desenhos/figuras.tex  ×  glossário figuras/sinais-de-referencia.md,
+#
+# no qual o glossário é a ÚNICA fonte que sabe em que figura cada sinal está
+# desenhado — por isso ele declara isso explicitamente:
+#
+#     - (4) haste de acionamento — Figuras 1, 2
+#     - (9) assento de vedação — Figura 1
+#
+# O "— Figuras N" não é enfeite: é a declaração de quem abriu a imagem e
+# conferiu. Sem ela o script só saberia que o sinal foi mencionado em algum
+# lugar, que é exatamente o buraco que deixava passar sinal citado no texto e
+# desenhado em figura nenhuma.
+#
+# DUAS ARMADILHAS DE IMPLEMENTAÇÃO, as duas já custaram caro aqui:
+#
+# (a) NADA de `sort -un` alimentando `comm`. O `sort -un` ordena por valor
+#     (2, 9, 10) e o `comm` compara por texto (10 < 2), então basta existir um
+#     sinal de dois dígitos — o caso normal num pedido real — para o `comm`
+#     desalinhar, reportar como ausente um sinal presente nos dois lados e
+#     ainda despejar "comm: input is not in sorted order" no meio do relatório.
+# (b) Comparação de conjunto se faz em Python, com set(). É mais curto que a
+#     versão em `comm` e não tem ordem para errar.
 # ---------------------------------------------------------------------------
 secao "Sinais de referência (advisory)"
-sinais_texto=$(grep -oh '([0-9]\{1,3\})' "$TMP/relatorio-descritivo.norm.txt" "$TMP/reivindicacoes.norm.txt" \
-    | tr -d '()' | sort -un)
-fontes_sinais_figuras=(pedido/desenhos/figuras.tex)
-[ -f figuras/sinais-de-referencia.md ] && fontes_sinais_figuras+=(figuras/sinais-de-referencia.md)
-sinais_figuras=$(grep -oh '([0-9]\{1,3\})' "${fontes_sinais_figuras[@]}" \
-    | tr -d '()' | sort -un)
-so_no_texto=$(comm -23 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | grep -c . || true)
-so_nas_figuras=$(comm -13 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | grep -c . || true)
-if [ "$so_no_texto" -eq 0 ] && [ "$so_nas_figuras" -eq 0 ]; then
-    ok "os sinais de referência do texto e do lado das figuras coincidem"
-else
-    [ "$so_no_texto" -gt 0 ] && aviso "sinais citados no texto e ausentes do lado das figuras: $(comm -23 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | tr '\n' ' ')"
-    [ "$so_nas_figuras" -gt 0 ] && aviso "sinais do lado das figuras e ausentes do texto: $(comm -13 <(printf '%s\n' "$sinais_texto") <(printf '%s\n' "$sinais_figuras") | tr '\n' ' ')"
-fi
+resultado_sinais=$(python3 - \
+        "$TMP/relatorio-descritivo.norm.txt" \
+        "$TMP/reivindicacoes.norm.txt" \
+        pedido/desenhos/figuras.tex \
+        figuras/sinais-de-referencia.md <<'PY'
+import os, re, sys
+
+texto_rd, texto_re, arquivo_figuras, arquivo_glossario = sys.argv[1:5]
+
+
+def le(caminho):
+    if not os.path.exists(caminho):
+        return ''
+    return open(caminho, encoding='utf-8', errors='replace').read()
+
+
+def sem_comentarios(fonte):
+    # Comentário LaTeX: de um '%' não escapado até o fim da linha. Sem isto o
+    # bloco-guia no topo de figuras.tex, que cita \figura quatro vezes para
+    # explicar o uso, contaria como quatro figuras declaradas.
+    return re.sub(r'(?m)(?<!\\)%.*$', '', fonte)
+
+
+def sinais(texto):
+    return {int(n) for n in re.findall(r'\((\d{1,3})\)', texto)}
+
+
+no_texto = sinais(le(texto_rd)) | sinais(le(texto_re))
+fonte_figuras = sem_comentarios(le(arquivo_figuras))
+nas_frases = sinais(fonte_figuras)
+
+# Glossário: "- (4) haste de acionamento — Figuras 1, 2" ou "... — Figura 1".
+# O travessão pode ser em, en ou hífen duplo, porque quem preenche é humano.
+glossario, sem_figura = {}, set()
+for linha in le(arquivo_glossario).splitlines():
+    m = re.match(r'\s*[-*]\s*\((\d{1,3})\)\s*(.*)', linha)
+    if not m:
+        continue
+    sinal, resto = int(m.group(1)), m.group(2)
+    figs = set()
+    corte = re.split(r'\s(?:—|–|--)\s', resto, maxsplit=1)
+    if len(corte) == 2:
+        figs = {int(n) for n in re.findall(r'\d{1,3}', corte[1])}
+    glossario[sinal] = figs
+    if not figs:
+        sem_figura.add(sinal)
+
+# Quantas figuras existem de fato, para pegar remissão a figura inexistente.
+n_figuras = len(re.findall(r'\\figura\b', fonte_figuras))
+
+declarados = set(glossario) | nas_frases
+
+
+def avisa(mensagem):
+    print('AVISO|' + mensagem)
+
+
+achou = False
+
+faltando = sorted(no_texto - declarados)
+if faltando:
+    achou = True
+    avisa('sinais citados no texto e não declarados do lado das figuras: '
+          + ' '.join(f'({n})' for n in faltando))
+
+sobrando = sorted(declarados - no_texto)
+if sobrando:
+    achou = True
+    avisa('sinais declarados do lado das figuras e nunca citados no texto: '
+          + ' '.join(f'({n})' for n in sobrando))
+
+if glossario:
+    orfaos = sorted(sem_figura & no_texto)
+    if orfaos:
+        achou = True
+        avisa('sinais citados no texto e que o glossário não localiza em '
+              'nenhuma figura: ' + ' '.join(f'({n})' for n in orfaos)
+              + ' — confira a imagem e complete o "— Figuras N" em '
+                'figuras/sinais-de-referencia.md')
+
+    inexistentes = sorted({f for figs in glossario.values() for f in figs
+                           if n_figuras and (f < 1 or f > n_figuras)})
+    if inexistentes:
+        achou = True
+        avisa('o glossário remete a figura que não existe: '
+              + ' '.join(f'Figura {f}' for f in inexistentes)
+              + f' (há {n_figuras} figura(s) declarada(s))')
+
+    nao_catalogados = sorted(no_texto - set(glossario))
+    if nao_catalogados:
+        achou = True
+        avisa('sinais citados no texto e ausentes do glossário: '
+              + ' '.join(f'({n})' for n in nao_catalogados))
+else:
+    achou = True
+    avisa('figuras/sinais-de-referencia.md não tem nenhum sinal declarado — '
+          'sem ele não dá para conferir em que figura cada sinal aparece')
+
+if not achou:
+    print('OK|os %d sinais de referência do texto estão declarados e '
+          'localizados em figura' % len(no_texto))
+PY
+)
+while IFS='|' read -r nivel mensagem; do
+    [ -z "$nivel" ] && continue
+    case "$nivel" in
+        OK) ok "$mensagem" ;;
+        *)  aviso "$mensagem" ;;
+    esac
+done <<< "$resultado_sinais"
 
 # ---------------------------------------------------------------------------
 # Resultado

@@ -76,3 +76,9 @@ Thumbs.db:encryptable
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
+
+# PDF gerado ao regerar uma figura de exemplo com
+# `pdflatex figuras/fontes-dos-exemplos/<figura>.tex`. A imagem que vale é a
+# de figuras/, para onde o arquivo é copiado; o que sobra na subpasta é
+# artefato de compilação e viraria duplicata versionada.
+/figuras/fontes-dos-exemplos/*.pdf

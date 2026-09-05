@@ -21,19 +21,16 @@
 %% ler.                                                                 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\secaoinpi{Exemplos de concretizações \danatureza}
+% O art. 27, VII veda "concretização preferida" e afins no relatório de
+% MODELO DE UTILIDADE. \secaodasconcretizacoes e \nomedaconcretizacao trocam
+% o vocabulário junto com a natureza — não os substitua por texto fixo.
+\secaoinpi{\secaodasconcretizacoes}
 
-\ifinvencao
-\pnum Em uma concretização preferida, o corpo tubular (2) é obtido por injeção
-de poliamida reforçada com fibra de vidro, a membrana elástica (3) é de
-elastômero de etileno-propileno-dieno e a mola de retorno (5) é de aço inoxidável
-austenítico, com pré-carga de 12 N.
-\else
-\pnum Em uma primeira variação construtiva, o corpo tubular (2) é obtido por
-injeção de poliamida reforçada com fibra de vidro, a membrana elástica (3) é de
-elastômero de etileno-propileno-dieno e a mola de retorno (5) é de aço inoxidável
-austenítico, com pré-carga de 12 N.
-\fi
+\pnum Em uma \ifinvencao concretização preferida\else primeira variação
+construtiva\fi, o corpo tubular (2) é obtido por injeção de poliamida reforçada
+com fibra de vidro, a membrana elástica (3) é de elastômero de
+etileno-propileno-dieno e a mola de retorno (5) é de aço inoxidável austenítico,
+com pré-carga de 12 N.
 
 \pnum O atuador eletromecânico (6) é constituído por um solenoide de bobina
 única, alimentado em 12 V, e o sensor de pressão (7) é do tipo piezorresistivo,
@@ -47,20 +44,31 @@ conforme a expressão:
     W = \int_{0}^{t_{p}} v(t)\, i(t)\, \mathrm{d}t
 \end{equation}
 
-\pnum Foram realizados ensaios comparativos entre uma concretização do
+\pnum Foram realizados ensaios comparativos entre uma \nomedaconcretizacao\ do
 dispositivo de acionamento (1) e dois conjuntos representativos do estado da
 técnica, submetidos ao mesmo regime de 40 ciclos diários de irrigação, com
 pressão de linha de 200 kPa. Os resultados estão reunidos na Tabela 1.
 
 \begin{tabelainpi}{Energia consumida por ciclo de acionamento e pressão mínima
 de fechamento}
-    \begin{tabular}{lrr}
+    % Colunas de largura fixa (L/R/C do lib/inpitex), somando menos que
+    % \linewidth: com 'lrr' esta tabela ficaria 2 cm mais larga que a caixa de
+    % texto e imprimiria por cima da margem. As larguras foram medidas para o
+    % número de publicação caber inteiro numa linha — quebrar "BR 10 2015
+    % 000000 0" no meio atrapalha a leitura do documento citado.
+    %
+    % O \tabcolsep menor devolve 8 pt à largura útil, o que é o que faz as três
+    % colunas caberem. Fica restrito a esta tabela: o tabelainpi abre um grupo.
+    \setlength{\tabcolsep}{4pt}%
+    \begin{tabular}{@{}L{0.552\linewidth}R{0.198\linewidth}R{0.194\linewidth}@{}}
         \toprule
-        Conjunto ensaiado & Energia por ciclo (J) & Pressão mínima (kPa) \\
+        Conjunto ensaiado
+            & \multicolumn{1}{C{0.198\linewidth}}{Energia por ciclo (J)}
+            & \multicolumn{1}{C{0.194\linewidth}}{Pressão mínima (kPa)} \\
         \midrule
-        Acionamento direto (BR 10 2015 000000 0)      & 216{,}0 & 0   \\
-        Acionamento hidráulico (US 2018/0123456 A1)   & 4{,}8   & 120 \\
-        Dispositivo de acionamento (1)                & 1{,}9   & 0   \\
+        Acionamento direto (BR 10 2015 000000 0)    & 216{,}0 & 0   \\
+        Acionamento hidráulico (US 2018/0123456 A1) & 4{,}8   & 120 \\
+        Dispositivo de acionamento (1)              & 1{,}9   & 0   \\
         \bottomrule
     \end{tabular}
 \end{tabelainpi}
