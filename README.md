@@ -179,6 +179,20 @@ Use `equation`, que já numera sequencialmente conforme o art. 20:
 \end{equation}
 ```
 
+### Grandezas numéricas: prefira faixas
+
+Ao descrever medida, proporção, temperatura, tempo ou qualquer outra
+grandeza, prefira uma faixa ("entre 10 mm e 15 mm") a um valor fechado
+("12 mm"), sempre que o material de origem sustentar a variação. A razão é
+de proteção, não de estilo: um valor fechado protege só aquele número exato,
+e concorrente que use 13 mm passa ao largo da patente; uma faixa protege
+toda a amplitude reivindicada.
+
+Isso não é licença para inventar amplitude. Se o material só traz um valor
+pontual e não há como saber se ele admite variação, a regra de sempre vale
+primeiro: **pare e pergunte** ao depositante em vez de arbitrar os extremos
+da faixa.
+
 ### Reivindicações
 
 ```latex
@@ -209,9 +223,18 @@ no relatório descritivo, nas reivindicações nem no resumo. Declare cada uma
 
 O arquivo é lido duas vezes: o relatório descritivo gera com ele a listagem
 exigida pelos **arts. 26, III e 27, V** ("A Figura 1 apresenta a vista em
-corte..."), e `desenhos.tex` posiciona as imagens rotuladas "Figura 1",
+corte..."), precedida de um parágrafo introdutório genérico que o próprio
+template imprime; e `desenhos.tex` posiciona as imagens rotuladas "Figura 1",
 "Figura 2". Numeração e ordem ficam consistentes por construção — não há duas
 listas para manter em sincronia.
+
+A descrição de cada `\figura` é **uma única frase**, identificando o que a
+imagem representa — não uma enumeração de todos os sinais de referência dela.
+O art. 27, V pede descrição "breve"; o detalhamento de cada elemento numerado
+é assunto do corpo do relatório descritivo, não desta listagem. Se a imagem
+for fotografia **sem** sinais de referência marcados (ensaio, protótipo,
+resultado visual), a frase é só uma descrição do que ela mostra, sem inventar
+sinal que não está nela.
 
 As imagens vão em `figuras/`, referidas sem extensão. Sem o argumento opcional,
 cada figura ocupa a página inteira; com uma largura menor, várias cabem na mesma
@@ -222,8 +245,14 @@ desenhos tem geometria própria, conforme o **art. 38, I**: margem superior de
 Exigências de conteúdo das figuras (**art. 39**): isentas de texto, admitidos
 apenas termos indicativos ("corte AA", "aberto"); sinais de referência
 identificando o mesmo elemento em todas as figuras; ordenadas conforme o
-relatório. As figuras de exemplo em `figuras/` são desenhos vetoriais, com as
-fontes em `figuras/fontes-dos-exemplos/` — substitua-as pelas do seu pedido.
+relatório. **O agente de IA nunca gera a imagem** — ela é sempre trazida por
+quem redige o pedido, já no formato exigido pela norma; veja
+`figuras/LEIA-ME.md` para o fluxo completo e `figuras/sinais-de-referencia.md`
+para o glossário de sinais que alimenta tanto a frase única quanto a
+explicação detalhada no relatório. As figuras de exemplo em `figuras/` são
+desenhos vetoriais, com as fontes em `figuras/fontes-dos-exemplos/` — um
+mecanismo só do template, para regenerar o showcase; substitua as duas pelas
+imagens do seu pedido, trazidas de fora.
 
 ### Cópia de comparação (modificações e pedido dividido)
 
@@ -437,7 +466,7 @@ primeiro commit. `anterioridades/` fica de fora nos dois casos.
 | **Inventar dado técnico** | Um modelo de linguagem preenche lacuna com número plausível. Num pedido isso é matéria que não se sustenta no exame (art. 24 da LPI), num documento que você assina. A instrução mais valiosa do seu prompt é "**pare e me pergunte** em vez de preencher". |
 | **Acrescentar matéria fora da origem** | O art. 32 da LPI, regulado pela Resolução INPI/PR nº 93/2013, fecha a porta para incluir matéria depois do requerimento de exame. |
 | **Colar texto de anterioridade** | Citação em prosa, pelo número de publicação (art. 27, II). |
-| **Copiar desenho de origem para `figuras/`** | Print de CAD vem com carimbo e logotipo: o art. 21 proíbe, e o art. 39, I exige figura isenta de texto. A figura final é redesenhada — veja `figuras/fontes-dos-exemplos/`. |
+| **Criar, gerar ou redesenhar uma imagem para `figuras/`** | Nem copiando desenho de origem, nem com TikZ, nem por qualquer outro meio. Print de CAD vem com carimbo e logotipo: o art. 21 proíbe, e o art. 39, I exige figura isenta de texto. A imagem final só entra trazida por quem redige o pedido — veja `figuras/LEIA-ME.md`. |
 
 ### Peça um mapa de proveniência
 

@@ -525,8 +525,13 @@
 \newcommand{\inpi@arquivofiguras}{pedido/desenhos/figuras}
 \newcommand{\arquivodefiguras}[1]{\renewcommand{\inpi@arquivofiguras}{#1}}
 
-% Chamada no relatório descritivo, na posição do art. 27, V.
+% Chamada no relatório descritivo, na posição do art. 27, V. O parágrafo de
+% abertura é boilerplate do próprio template, por isso impresso aqui e não em
+% pedido/desenhos/figuras.tex: cada \figura ali deve trazer só a frase única
+% que identifica a respectiva imagem (ver o comentário-guia daquele arquivo).
 \newcommand{\imprimirdescricaodosdesenhos}{%
+    \par São descritas a seguir as figuras que compõem o documento de
+    desenhos do presente pedido.%
     \let\figura\inpi@figuralistagem
     \input{\inpi@arquivofiguras}%
 }

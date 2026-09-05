@@ -13,14 +13,28 @@
 %% Por isso a numeração e a ordem das figuras são consistentes por      %%
 %% construção: não existem duas listas para manter em sincronia.        %%
 %%                                                                     %%
+%% A imagem em si NUNCA é gerada durante a redação — vem pronta de      %%
+%% figuras/, trazida por quem redige o pedido. Veja figuras/LEIA-ME.md. %%
+%%                                                                     %%
 %% Sintaxe:                                                             %%
 %%     \figura{<arquivo em figuras/, sem extensão>}{<descrição>}         %%
 %%     \figura[<opções de \includegraphics>]{<arquivo>}{<descrição>}     %%
 %%                                                                     %%
 %% A descrição entra na frase "A Figura N apresenta ...", então escreva-a %%
-%% em minúscula e sem ponto final. Art. 27, V — especifique a           %%
-%% representação gráfica: vista, corte, esquema de circuito, diagrama em %%
-%% bloco, fluxograma, gráfico.                                          %%
+%% em minúscula e sem ponto final — e em UMA ÚNICA FRASE, identificando  %%
+%% o que a figura representa (art. 27, V pede descrição "breve"). Não    %%
+%% enumere aqui todos os sinais de referência da imagem: o detalhamento  %%
+%% de cada elemento numerado é assunto do corpo do relatório descritivo  %%
+%% (arts. 27, VI e VII), não desta listagem. Use                        %%
+%% figuras/sinais-de-referencia.md como ponto de partida para os nomes.  %%
+%%                                                                     %%
+%% Se a imagem for fotografia SEM sinais de referência marcados (ensaio, %%
+%% protótipo, resultado visual), a frase é só uma descrição do que ela   %%
+%% mostra, sem inventar sinal que não está na imagem — ex.:              %%
+%% \figura{ensaio-de-vazao}{o ensaio de vazão do protótipo em bancada}.   %%
+%%                                                                     %%
+%% Art. 27, V — especifique a representação gráfica: vista, corte,      %%
+%% esquema de circuito, diagrama em bloco, fluxograma, gráfico.          %%
 %%                                                                     %%
 %% O argumento opcional controla o tamanho. Sem ele, a figura ocupa a   %%
 %% página inteira; com uma largura menor (ex.: width=0.45\linewidth),   %%
@@ -43,10 +57,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \figura{figura-1-vista-em-corte}{a vista em corte longitudinal do dispositivo
-de acionamento (1), com o corpo tubular (2), a membrana elástica (3), a haste
-de acionamento (4), a mola de retorno (5), o atuador eletromecânico (6), o
-sensor de pressão (7), a unidade de controle (8) e o assento de vedação de
-dupla face (9)}
+de acionamento (1)}
 
 \figura{figura-2-fluxograma}{o fluxograma das etapas do processo de controle de
 vazão executado pela unidade de controle (8)}
