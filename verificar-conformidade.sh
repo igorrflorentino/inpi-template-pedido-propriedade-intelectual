@@ -128,7 +128,7 @@ fi
 # Os .log vêm da compilação: no modo --check-only são os do build anterior (na
 # CI, os que a latex-action deixou). Sem o .log a checagem não roda e diz isso.
 # ---------------------------------------------------------------------------
-secao "Transbordamento de caixa — matéria fora da página ou fora da margem"
+secao "Transbordamento e margens — matéria fora da página ou fora da caixa"
 for peca in "${PECAS[@]}"; do
     if [ ! -f "$peca.log" ]; then
         aviso "$peca.log não existe — transbordamento não verificado (rode sem --check-only)"
@@ -157,8 +157,34 @@ for tipo, excesso, onde in graves:
     print(f'FALHA|{peca}: Overfull \\{tipo}box de {excesso:.1f}pt — {causa} {onde}')
 for tipo, excesso, onde in leves:
     print(f'AVISO|{peca}: Overfull \\{tipo}box de {excesso:.1f}pt (menos de 2pt) {onde}')
-if not graves and not leves:
-    print(f'OK|{peca}: nenhuma caixa transbordada')
+
+# O próprio pacote de estilo reclama, no .log, de figura cuja margem lateral
+# sai da faixa do art. 38, I. É a única checagem que precisa medir a figura
+# COMPOSTA, coisa que só o TeX sabe fazer — daqui só dá para colher o aviso e
+# promovê-lo a falha, que é o peso que a norma lhe dá.
+# O bloco vai até a primeira linha em branco. Não dá para juntar linha a linha
+# pelo prefixo "(inpitex)": o pdflatex quebra a saída em 79 colunas, e a
+# continuação de uma linha longa vem sem prefixo nenhum — foi o que truncava a
+# mensagem em "84 mm de margem l".
+#
+# São DUAS quebras diferentes e elas não podem ser tratadas do mesmo jeito:
+# a de \MessageBreak vem como "\n(inpitex)   " e vale um espaço; a do
+# max_print_line corta a linha em 79 colunas SEM espaço nenhum, no meio da
+# palavra, e tem de ser costurada sem inserir nada — senão a mensagem sai com
+# "margem l ateral".
+avisos_pacote = []
+for m in re.finditer(r'Package inpitex Warning: (Art\. 38.*?)(?=\n[ \t]*\n)',
+                     texto, re.S):
+    limpo = re.sub(r'\n\(inpitex\)[ \t]*', ' ', m.group(1))
+    limpo = limpo.replace('\n', '')
+    limpo = re.sub(r'[ \t]+', ' ', limpo).strip()
+    limpo = re.sub(r'\s*on input line \d+\.?$', '', limpo)
+    avisos_pacote.append(limpo)
+for limpo in avisos_pacote:
+    print(f'FALHA|{peca}: {limpo}')
+
+if not graves and not leves and not avisos_pacote:
+    print(f'OK|{peca}: nenhuma caixa transbordada e nenhuma figura fora da margem')
 PY
     )
     while IFS='|' read -r nivel mensagem; do
@@ -262,7 +288,12 @@ secao "Arts. 19 e 21 — sem representação gráfica fora do documento de desen
 #     aponta o arquivo e a linha.
 # (b) NO PDF. Pega imagem rasterizada que tenha chegado ao PDF por outro
 #     caminho, sem um \includegraphics visível nos arquivos de conteúdo.
-COMANDOS_GRAFICOS='\\includegraphics|\\figura|\\imprimirdesenhos|\\imprimirdescricaodosdesenhos|begin\{tikzpicture\}|begin\{figure\}'
+#
+# \imprimirdescricaodosdesenhos NÃO entra nesta lista, embora tenha "desenhos"
+# no nome: ela imprime a listagem textual dos arts. 26, III e 27, V, sem
+# nenhuma imagem. Chamá-la de comando gráfico era acusar de violar o art. 19
+# justamente a macro que existe para cumpri-lo.
+COMANDOS_GRAFICOS='\\includegraphics|\\figura\b|\\imprimirdesenhos|begin\{tikzpicture\}|begin\{figure\}'
 declare -A FONTES_DA_PECA=(
     [relatorio-descritivo]='pedido/relatorio-descritivo'
     [reivindicacoes]='pedido/reivindicacoes'
@@ -403,7 +434,13 @@ fi
 secao "Art. 28 — forma das reivindicações"
 # Extrai o quadro reivindicatório: do cabeçalho em diante, uma reivindicação
 # por número no início de linha.
-python3 - "$TMP/reivindicacoes.norm.txt" "$NATUREZA" <<'PY'
+#
+# O bloco devolve as linhas no formato "NIVEL|mensagem", como as demais
+# checagens, em vez de imprimir direto. Antes ele imprimia, e o shell somava 1
+# a FALHAS pelo codigo de saida, qualquer que fosse o numero de defeitos: duas
+# reivindicacoes com dois pontos finais eram relatadas e o rodape anunciava
+# "1 FALHA(S)".
+resultado_reiv=$(python3 - "$TMP/reivindicacoes.norm.txt" "$NATUREZA" <<'PY'
 import re, sys
 
 caminho, natureza = sys.argv[1], sys.argv[2]
@@ -424,15 +461,16 @@ for i in range(1, len(partes) - 1, 2):
     reivs.append((numero, corpo))
 
 falhas = 0
-def ok(m):    print(f'  OK     {m}')
+def ok(m):
+    print(f'OK|{m}')
 def falha(m):
     global falhas
-    print(f'  FALHA  {m}')
+    print(f'FALHA|{m}')
     falhas += 1
 
 if not reivs:
     falha('nenhuma reivindicação encontrada no PDF')
-    sys.exit(2)
+    sys.exit(0)
 
 # Art. 28, I — numeradas consecutivamente em algarismos arábicos.
 numeros = [n for n, _ in reivs]
@@ -469,9 +507,15 @@ if natureza == 'modelo-de-utilidade':
 else:
     ok(f'{len(independentes)} reivindicação(ões) independente(s): {independentes}')
 
-sys.exit(1 if falhas else 0)
 PY
-[ $? -ne 0 ] && FALHAS=$((FALHAS + 1))
+)
+while IFS='|' read -r nivel mensagem; do
+    [ -z "$nivel" ] && continue
+    case "$nivel" in
+        OK) ok "$mensagem" ;;
+        *)  falha "$mensagem" ;;
+    esac
+done <<< "$resultado_reiv"
 
 # ---------------------------------------------------------------------------
 # Art. 40 — resumo: 50 a 200 palavras, não excedendo uma página

@@ -15,7 +15,10 @@ FONTES_PROSA := pedido/*/*.tex dados-do-pedido.tex $(addsuffix .tex,$(PECAS))
 # Avisos do chktex silenciados (ruído de macros/comentários neste template):
 #  1 espaço após comando · 8 traços · 12/36 espaçamento · 24 espaço após \label
 #  44 nudge de booktabs
-CHKTEX_SILENCIA := -n1 -n8 -n12 -n24 -n36 -n44
+# -I0 impede o chktex de seguir \input/\usepackage: cada arquivo já é
+# passado explicitamente, e sem isso ele tenta abrir \input{\macro} e
+# despeja avisos que não são do código.
+CHKTEX_SILENCIA := -I0 -n1 -n8 -n12 -n24 -n36 -n44
 
 # -halt-on-error: erro grave derruba o build em vez de o nonstopmode "se
 # recuperar" e entregar um PDF com erro silencioso.
@@ -73,9 +76,11 @@ verificar:
 ## lint      Análise estática (chktex) da prosa, das raízes e do pacote de estilo
 lint:
 	chktex -q $(CHKTEX_SILENCIA) $(FONTES_PROSA)
-	@# O .sty vai à parte: o chktex não resolve \input{\macro} e reclamaria de
-	@# coisas que não são erro, então aqui só interessam os avisos de sintaxe.
-	@chktex -q $(CHKTEX_SILENCIA) -n11 -n27 lib/inpitex.sty
+	@# O .sty vai à parte, com supressões próprias: ali o chktex não resolve
+	@# \input{\macro} (27), lê os "..." das mensagens de erro como reticências
+	@# (11) e trata os artigos citados nas mensagens ("art. 38, I:") como fim de
+	@# frase (13). Nenhum dos três é problema em código de pacote.
+	@chktex -q $(CHKTEX_SILENCIA) -n11 -n13 -n27 lib/inpitex.sty
 
 ## limpar    Remove artefatos de compilação (inclui os PDFs do showcase)
 limpar:

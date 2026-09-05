@@ -47,16 +47,20 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq chktex poppler-utils
 
       # Lint ADVISORY: aponta problemas de prosa sem bloquear o build.
-      # As mesmas supressões do `make lint`.
+      # `make lint` para não haver duas listas de supressões divergindo.
       - name: Lint (chktex, advisory)
         continue-on-error: true
-        run: chktex -q -n1 -n8 -n12 -n24 -n36 -n44 pedido/*/*.tex dados-do-pedido.tex
+        run: make lint
 
       # Compila as quatro raízes numa imagem TeX Live completa. Os argumentos
       # padrão da ação já incluem -halt-on-error, então um erro grave derruba o
       # build em vez de gerar um PDF com erro silencioso.
+      #
+      # Os .log ficam no workspace e o passo de conformidade depende disso: é
+      # neles que estão os avisos de transbordamento de caixa e de margem de
+      # figura, que o LaTeX não trata como erro mas o INPI trataria.
       - name: Compilar as quatro peças com latexmk
-        uses: xu-cheng/latex-action@v3
+        uses: xu-cheng/latex-action@v4
         with:
           root_file: |
             relatorio-descritivo.tex

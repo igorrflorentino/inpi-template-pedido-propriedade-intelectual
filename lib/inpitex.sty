@@ -145,17 +145,37 @@
 \newcommand{\nomedanatureza}{}   % "invenção" | "modelo de utilidade"
 \newcommand{\danatureza}{}       % "da invenção" | "do modelo de utilidade"
 
+% Vocabulário das concretizações — NÃO é sinônimo escolhido por gosto.
+%
+% O art. 27, VII veda, no relatório descritivo de MODELO DE UTILIDADE, "trechos
+% do tipo 'concretização preferida', 'a título exemplificativo' etc.". A razão é
+% de direito material: o modelo de utilidade protege uma forma ou disposição
+% determinada (art. 9º da LPI), não um princípio que admita concretizações
+% alternativas. Escrever "concretização" ali sugere justamente o contrário.
+%
+% Por isso o par abaixo, que troca o vocabulário junto com a natureza:
+%   \secaodasconcretizacoes  título da seção
+%   \nomedaconcretizacao     a palavra, no corpo do texto
+\newcommand{\secaodasconcretizacoes}{}
+\newcommand{\nomedaconcretizacao}{}
+
 \newcommand{\natureza}[1]{%
     \protected@edef\inpi@natureza{#1}%
     \ifdefstring{\inpi@natureza}{invencao}{%
         \invencaotrue \modelodeutilidadefalse
         \renewcommand{\nomedanatureza}{invenção}%
         \renewcommand{\danatureza}{da invenção}%
+        \renewcommand{\secaodasconcretizacoes}{Exemplos de concretizações da
+            invenção}%
+        \renewcommand{\nomedaconcretizacao}{concretização}%
     }{%
         \ifdefstring{\inpi@natureza}{modelo-de-utilidade}{%
             \invencaofalse \modelodeutilidadetrue
             \renewcommand{\nomedanatureza}{modelo de utilidade}%
             \renewcommand{\danatureza}{do modelo de utilidade}%
+            \renewcommand{\secaodasconcretizacoes}{Variações construtivas do
+                modelo de utilidade}%
+            \renewcommand{\nomedaconcretizacao}{variação construtiva}%
         }{%
             \PackageError{inpitex}{%
                 Natureza desconhecida: '#1'.\MessageBreak
@@ -518,9 +538,16 @@
 % renumeradas consecutivamente, como exige o art. 28, I. Na cópia de comparação
 % sai tachada, exibindo entre colchetes o número que ela tinha no quadro
 % anterior — daí o primeiro argumento.
+%
+% O rótulo vai ENTRE COLCHETES, e isso não é estética. Impresso como "6." ele
+% se confunde com a numeração viva do quadro: suprimida a reivindicação 2 de um
+% quadro de quatro, a cópia de comparação saía com "1., 2. (tachada), 2., 3." —
+% dois itens com o mesmo número, e o examinador sem como saber qual mapeamento
+% se pretendeu. Entre colchetes, como o [--] de \paragraforemovido, o número
+% antigo se lê como referência ao quadro anterior e nunca colide com o novo.
 \newcommand{\reivindicacaoremovida}[2]{%
     \ifcopiadecomparacao
-        \item[\sout{#1.}]\sout{#2}%
+        \item[\sout{[#1]}]\sout{#2}%
     \fi
 }
 
@@ -556,15 +583,84 @@
     \par A Figura~\arabic{figurainpi} apresenta #3.%
 }
 
+% Art. 38, I — a figura deve ficar na página com margem esquerda e direita
+% entre 1,5 cm e 2,5 cm. A \newgeometry de \abrirdesenhos fixa a CAIXA DE
+% TEXTO em 2 cm de cada lado, mas a norma mede a FIGURA, e as duas coisas só
+% coincidem quando a figura preenche a largura da caixa.
+%
+% Com 'keepaspectratio', a escala é a menor entre largura e altura: qualquer
+% figura mais alta que ~1,3:1 passa a ser limitada pela altura, encolhe na
+% horizontal e as margens laterais crescem sozinhas. Uma figura em retrato
+% 3:16, por exemplo, sai com 8,5 cm de margem de cada lado — mais de três
+% vezes o teto do art. 38, I — e nada no build reclamava.
+%
+% Aqui a figura é composta primeiro numa caixa, a margem lateral resultante é
+% medida e comparada com a faixa da norma. O aviso vai para o .log, e o
+% verificar-conformidade.sh o transforma em FALHA.
+\newsavebox{\inpi@caixafigura}
+\newlength{\inpi@margemlateral}
+
+% Comprimento em milímetros inteiros, para a mensagem. 1 cm = 1864680 sp
+% (arredondado de 1 cm = 28,4527559 pt), e o \dimexpr converte o \newlength,
+% que é um \skip, no \dimen que o \number precisa.
+\newcommand{\inpi@emmm}[1]{\the\numexpr\number\dimexpr#1\relax*10/1864680\relax}
+
+\newcommand{\inpi@conferirmargemdafigura}[1]{%
+    \setlength{\inpi@margemlateral}{\paperwidth}%
+    \addtolength{\inpi@margemlateral}{-\wd\inpi@caixafigura}%
+    \setlength{\inpi@margemlateral}{0.5\inpi@margemlateral}%
+    \ifdim\inpi@margemlateral>2.5cm
+        \PackageWarning{inpitex}{%
+            Art. 38, I: a figura '#1' fica com
+            \inpi@emmm{\inpi@margemlateral} mm de margem lateral,
+            acima do maximo de 25 mm.\MessageBreak
+            Ela e alta demais para a caixa de texto, entao encolheu na
+            horizontal.\MessageBreak
+            Gire a imagem para paisagem, recorte o espaco em branco em
+            volta dela,\MessageBreak
+            divida-a em mais de uma figura, ou passe uma largura
+            explicita\MessageBreak
+            em \protect\figura[...] se ela divide a pagina com outra%
+        }%
+    \fi
+    \ifdim\inpi@margemlateral<1.5cm
+        \PackageWarning{inpitex}{%
+            Art. 38, I: a figura '#1' fica com
+            \inpi@emmm{\inpi@margemlateral} mm de margem lateral,
+            abaixo do minimo de 15 mm%
+        }%
+    \fi
+}
+
 % Modo "desenho" — usado no documento de desenhos. Art. 38, III: numeradas
 % consecutivamente. Art. 37: várias por página, nitidamente separadas — o que
-% se obtém passando uma largura menor no argumento opcional.
-\newcommand{\inpi@figuradesenho}[3][\inpi@opcoesfigura]{%
+% se obtém passando uma largura menor no argumento opcional. Nesse caso a
+% conferência de margem não se aplica, porque a figura divide a página com
+% outra de propósito.
+% O argumento opcional VAZIO (e não \inpi@opcoesfigura como valor padrão) é o
+% que distingue "o autor não pediu nada" de "o autor pediu uma largura menor".
+% Com o valor padrão embutido as duas situações chegam aqui indistinguíveis, e
+% a conferência de margem dispararia também na figura que divide a página de
+% propósito.
+\newif\ifinpi@figuraplena
+\newcommand{\inpi@figuradesenho}[3][]{%
     \refstepcounter{figurainpi}%
+    \ifblank{#1}{%
+        \let\inpi@opcoesdafigura\inpi@opcoesfigura
+        \inpi@figuraplenatrue
+    }{%
+        \def\inpi@opcoesdafigura{#1}%
+        \inpi@figuraplenafalse
+    }%
     \par\addvspace{\baselineskip}%
     \begin{center}%
     \begin{singlespace}%
-        \expandafter\includegraphics\expandafter[#1]{figuras/#2}%
+        \sbox\inpi@caixafigura{%
+            \expandafter\includegraphics\expandafter[\inpi@opcoesdafigura]%
+                {figuras/#2}%
+        }%
+        \ifinpi@figuraplena\inpi@conferirmargemdafigura{#2}\fi
+        \usebox{\inpi@caixafigura}%
         \par\addvspace{0.5\baselineskip}%
         Figura \arabic{figurainpi}%
     \end{singlespace}%
@@ -595,6 +691,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Menção que vem logo após o título, conforme a modalidade.
+%
+% SÓ NO RELATÓRIO DESCRITIVO. O art. 43, II ("no relatório descritivo, após o
+% título, deverá constar a indicação de se tratar de certificado de adição") e
+% o art. 51, II ("no relatório descritivo, após o título, deverá constar a
+% indicação de se tratar de divisão") dizem em que documento a menção entra, e
+% dizem só um. No resumo ela não é exigida por nada — o art. 40, I pede ali o
+% título e mais nada — e é indicação de natureza processual, exatamente o que o
+% art. 21 chama de "estranho à matéria do pedido". Por isso esta macro é
+% chamada de \abrirrelatoriodescritivo, e não de \inpi@imprimirtitulo, que o
+% resumo também usa.
 \newcommand{\inpi@mencaodevinculo}{%
     \ifcertificadodeadicao
         {\par\addvspace{0.5\baselineskip}%
@@ -607,12 +713,14 @@
 }
 
 % Título do pedido, centralizado e separado do texto. Art. 26, I: só na página
-% inicial do relatório descritivo. Art. 40, I: idem no resumo.
-\newcommand{\inpi@imprimirtitulo}{%
+% inicial do relatório descritivo. Art. 40, I: idem no resumo. O argumento
+% opcional recebe o que vier logo abaixo do título, dentro do mesmo bloco
+% centralizado — hoje, só a menção de vínculo do relatório descritivo.
+\newcommand{\inpi@imprimirtitulo}[1][]{%
     \begin{center}%
     \begin{singlespace}%
         {\inpi@fontetitulo \inpi@titulo}%
-        \inpi@mencaodevinculo
+        #1%
     \end{singlespace}%
     \end{center}%
     \par\addvspace{1.5\baselineskip}%
@@ -630,8 +738,9 @@
 }
 
 % --- Relatório descritivo (art. 26, I) ---
+% É o único documento que leva a menção de vínculo (arts. 43, II e 51, II).
 \newcommand{\abrirrelatoriodescritivo}{%
-    \inpi@imprimirtitulo
+    \inpi@imprimirtitulo[\inpi@mencaodevinculo]%
 }
 
 % --- Reivindicações (art. 18) ---
@@ -650,6 +759,14 @@
 % entre 2,5 cm e 4 cm; esquerda e direita entre 1,5 cm e 2,5 cm; e inferior de
 % pelo menos 1 cm. Este documento tem, portanto, geometria própria, e não vale
 % para ele o travamento de linhas por página do art. 17 (que trata de texto).
+%
+% NÃO imprime cabeçalho "DESENHOS". O art. 18 manda identificar com o termo
+% correspondente apenas as reivindicações e o resumo — o documento de desenhos
+% não está lá. E o art. 37 é literal: "o documento de desenhos será composto
+% apenas por figuras". Um título em corpo 16 negrito no alto da primeira página
+% é texto que a norma não pede em documento que ela define como só de figuras,
+% e cai na vedação do art. 21. A paginação n/N do art. 16 continua, essa sim
+% exigida.
 \newcommand{\abrirdesenhos}{%
     \newgeometry{
         top=3cm,
@@ -662,7 +779,6 @@
         includefoot=false
     }%
     \let\figura\inpi@figuradesenho
-    \inpi@cabecalhodocumento{DESENHOS}%
 }
 
 % Percorre a declaração de figuras posicionando as imagens.
