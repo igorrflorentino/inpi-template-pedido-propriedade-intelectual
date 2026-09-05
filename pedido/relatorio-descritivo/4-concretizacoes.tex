@@ -54,13 +54,16 @@ pressão de linha de 200 kPa. Os resultados estão reunidos na Tabela 1.
 
 \begin{tabelainpi}{Energia consumida por ciclo de acionamento e pressão mínima
 de fechamento}
-    \begin{tabular}{lrr}
+    % Colunas de largura fixa (L/R do lib/inpitex), somando menos que
+    % \linewidth: com 'lrr' esta tabela ficaria 2 cm mais larga que a caixa de
+    % texto e imprimiria por cima da margem.
+    \begin{tabular}{@{}L{0.46\linewidth}R{0.22\linewidth}R{0.22\linewidth}@{}}
         \toprule
         Conjunto ensaiado & Energia por ciclo (J) & Pressão mínima (kPa) \\
         \midrule
-        Acionamento direto (BR 10 2015 000000 0)      & 216{,}0 & 0   \\
-        Acionamento hidráulico (US 2018/0123456 A1)   & 4{,}8   & 120 \\
-        Dispositivo de acionamento (1)                & 1{,}9   & 0   \\
+        Acionamento direto (BR 10 2015 000000 0)    & 216{,}0 & 0   \\
+        Acionamento hidráulico (US 2018/0123456 A1) & 4{,}8   & 120 \\
+        Dispositivo de acionamento (1)              & 1{,}9   & 0   \\
         \bottomrule
     \end{tabular}
 \end{tabelainpi}

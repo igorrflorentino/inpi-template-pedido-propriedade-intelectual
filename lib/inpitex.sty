@@ -317,19 +317,72 @@
 %             ...
 %         \end{tabular}
 %     \end{tabelainpi}
+%
+% DUAS DECISÕES DE IMPLEMENTAÇÃO QUE NÃO DEVEM SER DESFEITAS:
+%
+% (a) NÃO se usa o ambiente 'center' aqui, e sim \centering. O 'center' é um
+%     'trivlist', e uma 'longtable' dentro de lista NÃO quebra de página: ela
+%     transborda o fim da página, o LaTeX emite apenas um "Overfull \vbox" (que
+%     é aviso, não erro, e portanto passa incólume pelo -halt-on-error) e as
+%     linhas excedentes SOMEM do PDF. Matéria escrita na fonte que não sai no
+%     documento assinado é o pior erro que este template poderia permitir. Com
+%     \centering a 'longtable' quebra normalmente. A rede de conformidade ainda
+%     checa "Overfull" nos .log como segunda barreira.
+%
+% (b) A legenda é presa ao corpo da tabela por \penalty\@M dos dois lados da
+%     cola vertical, E a própria legenda é tornada indivisível por
+%     \interlinepenalty\@M. As duas coisas são necessárias: sem os \penalty a
+%     legenda fica órfã no pé de uma página e a tabela começa na seguinte; sem o
+%     \interlinepenalty uma legenda de duas linhas se parte no meio, e a
+%     primeira linha fica sozinha na página anterior. Nos dois casos a
+%     "identificação sequencial" que o art. 20 exige acaba longe da tabela que
+%     ela identifica. (Cola precedida de penalidade não é ponto de quebra
+%     legítimo para o TeX — é assim que os \penalty seguram as duas juntas.)
 \newcounter{tabelainpi}
 \newenvironment{tabelainpi}[1]{%
     \par\addvspace{\baselineskip}%
     \refstepcounter{tabelainpi}%
-    \begin{center}%
+    \begingroup
+    \centering
     \begin{singlespace}%
-    Tabela \arabic{tabelainpi} -- #1\par\addvspace{0.4\baselineskip}%
+    \interlinepenalty\@M
+    Tabela \arabic{tabelainpi} -- #1\par
+    \penalty\@M
+    \vskip 0.4\baselineskip
+    \penalty\@M
 }{%
     \end{singlespace}%
-    \end{center}%
-    \par\addvspace{0.5\baselineskip}%
+    \par
+    \endgroup
+    \addvspace{0.5\baselineskip}%
 }
 
+% Colunas de LARGURA FIXA, para a tabela caber na caixa de texto.
+%
+%   L{<largura>}  quebra linha, alinhada à esquerda
+%   R{<largura>}  quebra linha, alinhada à direita (é o caso dos números)
+%   C{<largura>}  quebra linha, centralizada
+%
+% Com as colunas 'l', 'r' e 'c' do LaTeX a tabela tem a largura que o conteúdo
+% pedir, e uma tabela mais larga que a caixa de texto imprime PARA FORA da
+% margem — o LaTeX só emite um "Overfull \hbox", que é aviso e não erro. Com
+% larguras fixas somando menos que \linewidth isso não acontece. Prefira
+% frações de \linewidth a medidas absolutas: continuam certas se a margem mudar.
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% Tabela que passa de uma página: use 'longtable' no lugar de 'tabular', com
+% \endhead para repetir o cabeçalho. O ambiente tabelainpi já a acomoda.
+%
+%     \begin{tabelainpi}{Ensaios de durabilidade}
+%         \begin{longtable}{lrr}
+%             \toprule Ciclo & Vazão & Pressão \\ \midrule \endhead
+%             \bottomrule \endfoot
+%             ...
+%         \end{longtable}
+%     \end{tabelainpi}
+%
 % Expressões matemáticas: use o ambiente 'equation' do amsmath, que já numera
 % sequencialmente. Estruturas químicas podem ser inseridas como texto em preto.
 
