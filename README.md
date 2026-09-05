@@ -99,6 +99,15 @@ O seletor também troca o vocabulário das seções ("Campo da invenção" ↔ "
 do modelo de utilidade") e o efeito a destacar nos fundamentos — efeito técnico
 na invenção, melhoria funcional no modelo (art. 27, IV).
 
+Troca ainda a palavra "concretização", e isso não é questão de estilo: o
+**art. 27, VII** veda, no relatório de modelo de utilidade, "trechos do tipo
+*concretização preferida*, *a título exemplificativo* etc.", porque o modelo
+protege uma forma ou disposição determinada (art. 9º da LPI) e não um princípio
+que admita concretizações alternativas. Use `\secaodasconcretizacoes` no título
+da seção e `\nomedaconcretizacao` no corpo, e o texto sai "Exemplos de
+concretizações da invenção" ou "Variações construtivas do modelo de utilidade"
+conforme o caso.
+
 ### `\modalidade` — como o pedido entra
 
 | Valor | Efeito |
@@ -154,7 +163,7 @@ identificação sequencial (**art. 20**):
 
 ```latex
 \begin{tabelainpi}{Energia consumida por ciclo}
-    \begin{tabular}{lrr}
+    \begin{tabular}{@{}L{0.5\linewidth}R{0.2\linewidth}R{0.2\linewidth}@{}}
         \toprule
         Conjunto & Energia (J) & Pressão (kPa) \\
         \midrule
@@ -166,8 +175,33 @@ identificação sequencial (**art. 20**):
 ```
 
 A legenda sai acima, numerada ("Tabela 1 -- ..."), como nos formulários
-oficiais. Toda tabela precisa ser comentada em algum parágrafo: tabela solta é
-matéria que o examinador não sabe como ler.
+oficiais, e o ambiente segura legenda e corpo na mesma página. Toda tabela
+precisa ser comentada em algum parágrafo: tabela solta é matéria que o
+examinador não sabe como ler.
+
+**Use as colunas de largura fixa `L`, `R` e `C`** (esquerda, direita,
+centralizada), com as larguras somando menos que `\linewidth`. Com as colunas
+`l`, `r` e `c` do LaTeX a tabela fica com a largura que o conteúdo pedir, e uma
+tabela mais larga que a caixa de texto **imprime por cima da margem** — o LaTeX
+só emite um aviso, não um erro. Prefira frações de `\linewidth` a medidas
+absolutas: continuam certas se a margem mudar.
+
+**Tabela que passa de uma página:** troque `tabular` por `longtable`, com
+`\endhead` para repetir o cabeçalho.
+
+```latex
+\begin{tabelainpi}{Ensaios de durabilidade}
+    \begin{longtable}{@{}L{0.4\linewidth}R{0.25\linewidth}R{0.25\linewidth}@{}}
+        \toprule Ciclo & Vazão & Pressão \\ \midrule \endhead
+        \bottomrule \endfoot
+        ...
+    \end{longtable}
+\end{tabelainpi}
+```
+
+Um `tabular` comum não quebra de página: se não couber, ele transborda e as
+linhas que sobram **somem do PDF**. O `make verificar` recusa o build nesse
+caso, mas o jeito de não chegar lá é usar `longtable` desde o começo.
 
 ### Fórmulas e expressões matemáticas
 
@@ -242,14 +276,42 @@ página, como permite o art. 37 — desde que nitidamente separadas. O documento
 desenhos tem geometria própria, conforme o **art. 38, I**: margem superior de
 3 cm, laterais de 2 cm e inferior de 2 cm.
 
+**Cuidado com a proporção da imagem.** O art. 38, I exige margem esquerda e
+direita **entre 1,5 cm e 2,5 cm**, e quem ele mede é a *figura*, não a caixa de
+texto. Uma imagem mais alta que larga (mais ou menos 1,3:1) passa a ser limitada
+pela altura da página, encolhe na horizontal e as margens laterais crescem
+sozinhas: uma figura em retrato 3:16 sai com mais de 8 cm de margem de cada
+lado. O template mede isso e o `make verificar` **falha** — a saída é girar a
+imagem para paisagem, recortar o espaço em branco em volta dela, dividi-la em
+mais de uma figura, ou passar uma largura explícita se ela divide a página com
+outra.
+
+O documento de desenhos **não** leva cabeçalho "Desenhos": o art. 18 manda
+identificar com o termo correspondente apenas as reivindicações e o resumo, e o
+art. 37 diz que o documento de desenhos é composto *apenas por figuras*. Só a
+paginação `n/N` do art. 16 aparece ali.
+
 Exigências de conteúdo das figuras (**art. 39**): isentas de texto, admitidos
 apenas termos indicativos ("corte AA", "aberto"); sinais de referência
 identificando o mesmo elemento em todas as figuras; ordenadas conforme o
 relatório. **O agente de IA nunca gera a imagem** — ela é sempre trazida por
 quem redige o pedido, já no formato exigido pela norma; veja
-`figuras/LEIA-ME.md` para o fluxo completo e `figuras/sinais-de-referencia.md`
-para o glossário de sinais que alimenta tanto a frase única quanto a
-explicação detalhada no relatório. As figuras de exemplo em `figuras/` são
+`figuras/LEIA-ME.md` para o fluxo completo.
+
+O glossário `figuras/sinais-de-referencia.md` declara, para cada sinal, **em
+que figuras ele aparece**:
+
+```
+- (4) haste de acionamento — Figuras 1, 2
+- (9) assento de vedação — Figura 1
+```
+
+O trecho depois do travessão é a única informação do repositório que nenhum
+script consegue deduzir sozinho — nem o `verificar-conformidade.sh` nem um
+agente de IA enxergam o interior de um PDF de desenho. É com base nela que o
+`make verificar` avisa sobre sinal citado no texto e não localizado em figura
+alguma, sinal do glossário nunca citado no texto, e remissão a figura que não
+existe. As figuras de exemplo em `figuras/` são
 desenhos vetoriais, com as fontes em `figuras/fontes-dos-exemplos/` — um
 mecanismo só do template, para regenerar o showcase; substitua as duas pelas
 imagens do seu pedido, trazidas de fora.
@@ -285,11 +347,14 @@ temporizador mecânico.}
 | `\incluido{texto}` | texto, sem marca | <u>texto</u> |
 | `\substituido{antigo}{novo}` | novo, sem marca | ~~antigo~~ <u>novo</u> |
 | `\paragraforemovido{texto}` | nada, e **não consome número** | parágrafo tachado, com `[–]` no lugar do número |
-| `\reivindicacaoremovida{6}{texto}` | nada, e **não consome número** | reivindicação tachada, exibindo o número que tinha |
+| `\reivindicacaoremovida{6}{texto}` | nada, e **não consome número** | reivindicação tachada, rotulada `[6]` — o número que ela tinha |
 
 As duas últimas não consomem número justamente para que a numeração sequencial
 dos parágrafos (art. 26, II) e das reivindicações (art. 28, I) siga contínua no
-documento do pedido depois da supressão.
+documento do pedido depois da supressão. Na cópia de comparação o rótulo delas
+vai **entre colchetes** (`[–]`, `[6]`) para não se confundir com a numeração
+viva: suprimida a reivindicação 2 de um quadro de quatro, sem os colchetes a
+cópia sairia com dois itens numerados "2.".
 
 Para gerar a cópia de comparação:
 
@@ -391,6 +456,14 @@ make limpar       # remove artefatos
 make ajuda        # lista os alvos
 ```
 
+Quem decide se recompila é o `latexmk`, não o `make`: os alvos de PDF estão
+sempre "fora de data" de propósito, e o `latexmk` não faz nada quando nada
+mudou. É o que garante que editar qualquer arquivo de `pedido/` ou trocar uma
+imagem de `figuras/` regere o PDF — com uma lista de dependências escrita à mão
+no `Makefile`, esses arquivos ficariam de fora e `make pdf` responderia "Nothing
+to be done" depois de você editar o relatório, deixando você anexar ao
+peticionamento o PDF da versão anterior.
+
 Sem o `make`, cada peça é uma raiz LaTeX independente:
 
 ```sh
@@ -414,12 +487,21 @@ gráfica fora dos desenhos (art. 19), título idêntico entre relatório e resum
 com até 500 caracteres (art. 24), numeração sequencial dos parágrafos
 (art. 26, II), congruência das figuras (arts. 26, III e 39, V), forma das
 reivindicações (art. 28), reivindicação independente única em modelo de
-utilidade (art. 33) e limite de uma página do resumo (art. 40, II).
+utilidade (art. 33), margem lateral das figuras (art. 38, I) e limite de uma
+página do resumo (art. 40, II).
 
-Emite ainda um **aviso não-bloqueante** de congruência dos sinais de referência
-entre o texto e as descrições das figuras. É heurística de fonte: o script não
-vê o interior das imagens, então um sinal desenhado na figura mas não citado na
-descrição dela aparece como aviso a conferir à mão.
+Verifica também, nos `.log` da compilação, se alguma caixa transbordou. O LaTeX
+trata transbordamento como **aviso**, não como erro: o `-halt-on-error` não
+pega, o build "termina com sucesso" e mesmo assim um `Overfull \vbox` significa
+que houve **matéria empurrada para fora da página** — uma tabela alta demais
+perde as linhas excedentes, e elas simplesmente não existem no PDF que você
+anexa ao peticionamento. Aqui isso é falha. Um `Overfull \hbox` acima de 2 pt
+(tinta impressa por cima da margem) também; abaixo disso, aviso.
+
+Emite ainda **avisos não-bloqueantes** sobre os sinais de referência, cruzando o
+texto, a frase de cada figura e o glossário `figuras/sinais-de-referencia.md`.
+O script não vê o interior das imagens: quem sabe em que figura cada sinal está
+desenhado é o glossário, e é por isso que ele declara isso explicitamente.
 
 `--check-only` pula a compilação e verifica os PDFs existentes — é assim que a
 CI o executa, como passo bloqueante.

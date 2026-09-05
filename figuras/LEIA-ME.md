@@ -37,7 +37,7 @@ visual, sem sinais de referência marcados. Também é aceita: nesse caso não h
 número para mapear, e a "breve descrição" da figura é só uma frase dizendo o
 que a imagem mostra, sem inventar sinal que não existe nela.
 
-## Formato e nome do arquivo
+## Formato, proporção e nome do arquivo
 
 PDF vetorial é o formato do template (é o que `\includegraphics` espera e o
 que as figuras de exemplo usam); PNG e JPG também funcionam para fotografia.
@@ -45,11 +45,39 @@ Nome descritivo em kebab-case, sem espaço nem acento
 (`vista-em-corte-longitudinal.pdf`, não `fig1.pdf`) — é por esse nome, sem
 extensão, que `pedido/desenhos/figuras.tex` referencia o arquivo.
 
+**A proporção da imagem importa, e é onde se erra com mais frequência.** O
+art. 38, I exige margem esquerda e direita **entre 1,5 cm e 2,5 cm**, e quem ele
+mede é a figura, não a caixa de texto. Uma imagem mais alta que larga (a partir
+de mais ou menos 1,3:1) passa a ser limitada pela altura da página, encolhe na
+horizontal e as margens laterais crescem sozinhas — uma figura em retrato 3:16
+sai com mais de 8 cm de cada lado. O `make verificar` **falha** nesse caso, com
+a medida em milímetros. As saídas, em ordem de preferência:
+
+1. **girar a imagem para paisagem** — é o que a prática de desenho de patente
+   faz, e o INPI aceita a figura deitada na página;
+2. **recortar o espaço em branco** em volta do desenho, que costuma ser o
+   verdadeiro culpado;
+3. **dividir em mais de uma figura**, cada uma com sua numeração;
+4. se ela divide a página com outra de propósito (art. 37), passar uma largura
+   explícita: `\figura[width=0.45\linewidth]{...}{...}`. Nesse caso a
+   conferência de margem não se aplica, porque a disposição é intencional.
+
 ## `fontes-dos-exemplos/`
 
 Essa subpasta guarda as fontes TikZ que geram as **duas figuras de
 demonstração** deste template (`figura-1-vista-em-corte.pdf` e
 `figura-2-fluxograma.pdf`) — existe para o mantenedor do template regenerar o
-showcase, não é padrão a seguir num pedido real. Num pedido de verdade, as
+showcase, não é padrão a seguir num pedido real.
+
+Para regenerar uma delas:
+
+```sh
+cd figuras/fontes-dos-exemplos
+pdflatex figura-1-vista-em-corte.tex
+cp figura-1-vista-em-corte.pdf ..
+```
+
+O PDF que vale é o de `figuras/`; o que fica na subpasta é artefato de
+compilação, ignorado pelo git e removido por `make limpar`. Num pedido de verdade, as
 duas figuras de exemplo saem e esta subpasta some com elas; a imagem que
 entra no lugar delas vem de fora, nunca de código escrito durante a redação.
