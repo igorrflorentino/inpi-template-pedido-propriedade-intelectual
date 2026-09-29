@@ -77,6 +77,10 @@ pdflatex figura-1-vista-em-corte.tex
 cp figura-1-vista-em-corte.pdf ..
 ```
 
+Os três comandos funcionam como estão no terminal do Linux e no PowerShell
+(onde `cp` é um apelido do `Copy-Item`). No Prompt de Comando, escreva o
+caminho do `cd` com barra invertida e troque o `cp` por `copy`.
+
 O PDF que vale é o de `figuras/`; o que fica na subpasta é artefato de
 compilação, ignorado pelo git e removido por `make limpar`. Num pedido de verdade, as
 duas figuras de exemplo saem e esta subpasta some com elas; a imagem que

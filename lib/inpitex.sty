@@ -469,9 +469,9 @@
 %                            \incluido sublinhado, e o cabeçalho passa a
 %                            identificar o documento.
 %
-% A troca é feita pelo ./gerar-copia-de-comparacao.sh, que gera os PDFs
-% *-comparacao.pdf sem que você precise editar dados-do-pedido.tex — assim não
-% há risco de anexar ao peticionamento a versão marcada.
+% A troca é feita pelo gerar-copia-de-comparacao.py (make comparacao), que gera
+% os PDFs *-comparacao.pdf sem que você precise editar dados-do-pedido.tex —
+% assim não há risco de anexar ao peticionamento a versão marcada.
 %
 % O parágrafo único do art. 57 permite substituir a cópia de comparação por um
 % esclarecimento apontando página, trecho e tipo de modificação. Se preferir
@@ -614,7 +614,7 @@
 %
 % Aqui a figura é composta primeiro numa caixa, a margem lateral resultante é
 % medida e comparada com a faixa da norma. O aviso vai para o .log, e o
-% verificar-conformidade.sh o transforma em FALHA.
+% verificar-conformidade.py o transforma em FALHA.
 \newsavebox{\inpi@caixafigura}
 \newlength{\inpi@margemlateral}
 

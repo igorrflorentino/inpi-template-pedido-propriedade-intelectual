@@ -61,6 +61,56 @@ o histórico e o vínculo com o original.
 
 ---
 
+## O que instalar
+
+O template funciona igual no **Linux** e no **Windows**. Toda a automação —
+compilar, verificar, gerar o showcase e a cópia de comparação — é escrita em
+Python, sem bash, `sed` ou `awk`, e roda nativa no terminal de cada sistema.
+São três instalações:
+
+| O quê | Para quê | Linux (Debian/Ubuntu) | Windows |
+| --- | --- | --- | --- |
+| Distribuição LaTeX com `latexmk` | compilar as peças | `sudo apt install latexmk texlive-latex-extra texlive-fonts-recommended texlive-lang-portuguese texlive-plain-generic` | [TeX Live](https://tug.org/texlive/windows.html) ou MiKTeX (`winget install MiKTeX.MiKTeX`) |
+| Python 3.8 ou mais novo | os comandos `make` e a verificação | já vem instalado | `winget install Python.Python.3.12`, ou o instalador de [python.org](https://www.python.org/downloads/) |
+| poppler (`pdftotext`, `pdfinfo`, `pdfimages`) | `make verificar` | `sudo apt install poppler-utils` | `winget install oschwartz10612.Poppler` |
+
+O `chktex`, usado só por `make lint`, vem com o TeX Live e com o MiKTeX (no
+Debian/Ubuntu, `sudo apt install chktex`). No macOS o caminho é o do Linux:
+MacTeX, Python 3 e `brew install poppler`. Se faltar algum programa, o próprio
+comando diz qual é e como instalá-lo no seu sistema.
+
+### No Windows
+
+- **Os comandos são os mesmos.** No Prompt de Comando, `make pdf` roda o
+  `make.bat` da pasta do template; no PowerShell é preciso o `.\` na frente:
+  `.\make pdf`. Não é preciso instalar o GNU make nem o Git Bash.
+- **Depois de instalar pelo `winget`, feche e abra de novo o terminal:** o
+  PATH novo só vale nos terminais abertos depois da instalação.
+- **No MiKTeX**, o `latexmk` precisa do Perl
+  (`winget install StrawberryPerl.StrawberryPerl`), e o MiKTeX precisa estar
+  configurado para instalar sem perguntar os pacotes que faltarem (no MiKTeX
+  Console, em Settings, a opção de instalar pacotes *on-the-fly* marcada como
+  *Always*): a compilação roda em modo não interativo, e a janela de
+  confirmação ficaria sem ninguém para clicar nela. O TeX Live já traz o Perl e
+  os pacotes.
+- **Feche o PDF no Adobe Reader antes de recompilar.** Ele trava o arquivo
+  aberto, e a compilação falha ao tentar sobrescrevê-lo. O SumatraPDF e o
+  visualizador do próprio VS Code não travam.
+- **Tanto faz a opção de fim de linha** escolhida na instalação do Git for
+  Windows: o `.gitattributes` fixa o fim de linha dos arquivos que dependem
+  dele.
+
+### Hifenização do português
+
+Se o `make verificar` avisar que o LaTeX não tem os padrões de hifenização do
+português, o documento está sendo composto com as regras de quebra de outra
+língua — nada falha, mas palavras são partidas onde o português não parte. No
+TeX Live, instale o pacote `hyphen-portuguese` (no Debian/Ubuntu,
+`texlive-lang-portuguese`). No MiKTeX, ative o português na lista de línguas
+das configurações do MiKTeX Console e reconstrua os formatos.
+
+---
+
 ## Por onde começo
 
 1. **Preencha `dados-do-pedido.tex`.** É o único arquivo de metadados: título,
@@ -76,6 +126,9 @@ o histórico e o vínculo com o original.
    make pdf          # gera as quatro peças
    make verificar    # afirma a conformidade de forma sobre os PDFs gerados
    ```
+
+   No Windows, os mesmos comandos no Prompt de Comando; no PowerShell,
+   `.\make pdf` e `.\make verificar`.
 
 4. **Anexe os quatro PDFs** no Peticionamento Eletrônico, junto ao formulário
    de requerimento e à GRU paga.
@@ -307,7 +360,7 @@ que figuras ele aparece**:
 ```
 
 O trecho depois do travessão é a única informação do repositório que nenhum
-script consegue deduzir sozinho — nem o `verificar-conformidade.sh` nem um
+script consegue deduzir sozinho — nem o `verificar-conformidade.py` nem um
 agente de IA enxergam o interior de um PDF de desenho. É com base nela que o
 `make verificar` avisa sobre sinal citado no texto e não localizado em figura
 alguma, sinal do glossário nunca citado no texto, e remissão a figura que não
@@ -446,7 +499,7 @@ identificando o documento pelo número de publicação (`BR 10 2015 000000 0`,
 
 ## Compilação
 
-O `make` cobre o uso corrente:
+O `make` cobre o uso corrente, com os mesmos alvos no Linux e no Windows:
 
 ```sh
 make              # = make pdf
@@ -460,13 +513,20 @@ make limpar       # remove artefatos
 make ajuda        # lista os alvos
 ```
 
-Quem decide se recompila é o `latexmk`, não o `make`: os alvos de PDF estão
-sempre "fora de data" de propósito, e o `latexmk` não faz nada quando nada
-mudou. É o que garante que editar qualquer arquivo de `pedido/` ou trocar uma
-imagem de `figuras/` regere o PDF — com uma lista de dependências escrita à mão
-no `Makefile`, esses arquivos ficariam de fora e `make pdf` responderia "Nothing
-to be done" depois de você editar o relatório, deixando você anexar ao
-peticionamento o PDF da versão anterior.
+No Windows esses comandos rodam pelo `make.bat`: como estão no Prompt de
+Comando, e com `.\` na frente no PowerShell (`.\make pdf`). Por trás dos dois
+atalhos quem trabalha é o `tarefas.py`: o `Makefile` e o `make.bat` só repassam
+o alvo para ele, e é por isso que os dois sistemas se comportam igual. Dá para
+chamá-lo diretamente — `python3 tarefas.py pdf` no Linux, `py tarefas.py pdf`
+no Windows.
+
+Quem decide se recompila é o `latexmk`, não o `make`: os alvos de PDF sempre
+chamam o `latexmk`, de propósito, e ele não faz nada quando nada mudou. É o que
+garante que editar qualquer arquivo de `pedido/` ou trocar uma imagem de
+`figuras/` regere o PDF — com uma lista de dependências escrita à mão, esses
+arquivos ficariam de fora e `make pdf` responderia "Nothing to be done" depois
+de você editar o relatório, deixando você anexar ao peticionamento o PDF da
+versão anterior.
 
 Sem o `make`, cada peça é uma raiz LaTeX independente:
 
@@ -484,15 +544,15 @@ extensão compila o arquivo aberto no editor.
 
 ### Rede de conformidade
 
-`./verificar-conformidade.sh` compila as quatro peças e afirma, sobre os PDFs,
-cada exigência de forma verificável automaticamente: paginação por peça
-(art. 16), 20 a 35 linhas por página (art. 17), ausência de representação
-gráfica fora dos desenhos (art. 19), título idêntico entre relatório e resumo e
-com até 500 caracteres (art. 24), numeração sequencial dos parágrafos
-(art. 26, II), congruência das figuras (arts. 26, III e 39, V), forma das
-reivindicações (art. 28), reivindicação independente única em modelo de
-utilidade (art. 33), margem lateral das figuras (art. 38, I) e limite de uma
-página do resumo (art. 40, II).
+`make verificar` (ou `verificar-conformidade.py`, direto) compila as quatro
+peças e afirma, sobre os PDFs, cada exigência de forma verificável
+automaticamente: paginação por peça (art. 16), 20 a 35 linhas por página
+(art. 17), ausência de representação gráfica fora dos desenhos (art. 19),
+título idêntico entre relatório e resumo e com até 500 caracteres (art. 24),
+numeração sequencial dos parágrafos (art. 26, II), congruência das figuras
+(arts. 26, III e 39, V), forma das reivindicações (art. 28), reivindicação
+independente única em modelo de utilidade (art. 33), margem lateral das figuras
+(art. 38, I) e limite de uma página do resumo (art. 40, II).
 
 Verifica também, nos `.log` da compilação, se alguma caixa transbordou. O LaTeX
 trata transbordamento como **aviso**, não como erro: o `-halt-on-error` não
@@ -506,9 +566,12 @@ Emite ainda **avisos não-bloqueantes** sobre os sinais de referência, cruzando
 texto, a frase de cada figura e o glossário `figuras/sinais-de-referencia.md`.
 O script não vê o interior das imagens: quem sabe em que figura cada sinal está
 desenhado é o glossário, e é por isso que ele declara isso explicitamente.
+Avisa também quando o LaTeX compôs o texto sem os padrões de hifenização do
+português (veja "Hifenização do português", acima).
 
-`--check-only` pula a compilação e verifica os PDFs existentes — é assim que a
-CI o executa, como passo bloqueante.
+`--check-only` pula a compilação e verifica os PDFs existentes
+(`python3 verificar-conformidade.py --check-only`; no Windows, `py` no lugar de
+`python3`) — é assim que a CI o executa, como passo bloqueante.
 
 ---
 

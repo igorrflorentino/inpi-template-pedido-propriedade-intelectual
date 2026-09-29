@@ -10,13 +10,17 @@
 /desenhos.pdf
 /resumo.pdf
 
-# PDFs de demonstração gerados por ./gerar-exemplos.sh (o script é versionado;
+# PDFs de demonstração gerados por gerar-exemplos.py (o script é versionado;
 # apenas os PDFs gerados são ignorados)
 /exemplo-*.pdf
 
-# Cópias de comparação geradas por ./gerar-copia-de-comparacao.sh (art. 57, II).
+# Cópias de comparação geradas por gerar-copia-de-comparacao.py (art. 57, II).
 # Acompanham a petição, mas são saída de compilação como qualquer outra.
 /*-comparacao.pdf
+
+# Cache do Python. Os scripts já não o gravam (sys.dont_write_bytecode), mas
+# importar o tarefas.py de outro lugar recriaria a pasta.
+__pycache__/
 
 # Auxiliares gerais do LaTeX
 *.aux

@@ -13,7 +13,7 @@ desconfie e confira contra a Portaria 14/2024 antes de aplicar.
 
 | Arquivo | Papel |
 | --- | --- |
-| `Portaria INPI-DIRPA 14-2024` | **A norma central deste template.** Forma e conteúdo dos pedidos de patente e certificados de adição. É dela que vêm praticamente todas as regras implementadas em `lib/inpitex.sty` e verificadas em `verificar-conformidade.sh`. |
+| `Portaria INPI-DIRPA 14-2024` | **A norma central deste template.** Forma e conteúdo dos pedidos de patente e certificados de adição. É dela que vêm praticamente todas as regras implementadas em `lib/inpitex.sty` e verificadas em `verificar-conformidade.py`. |
 | `Resolucao INPI-PR 124-2013` | Diretrizes de exame — conteúdo do pedido. Orienta a redação (suficiência descritiva, formulação de reivindicações, terminologia); alimenta os comentários-guia dos arquivos de `pedido/`. |
 | `Portaria INPI 39-2021` | Entrada na fase nacional de pedidos internacionais (PCT). A forma dos documentos é a mesma da Portaria 14/2024 (art. 65 dela, e art. 9º, § 1º desta). |
 | `Portaria INPI 79-2022` | Trâmite prioritário. Procedimental — **não afeta** a forma dos documentos. |
@@ -67,7 +67,7 @@ versão mais recente:
    <assunto>.pdf`), sem prefixo de situação;
 2. **apague a versão antiga** — não a mantenha "por referência";
 3. releia os artigos citados em `lib/inpitex.sty` e em
-   `verificar-conformidade.sh`: a numeração dos artigos muda entre normas, e uma
+   `verificar-conformidade.py`: a numeração dos artigos muda entre normas, e uma
    citação que aponta para o artigo errado é pior do que citação nenhuma;
 4. rode `make verificar` e confira se alguma exigência mudou de conteúdo, não só
    de número.

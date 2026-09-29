@@ -1,0 +1,28 @@
+# Fim de linha e binários — o que precisa estar fixado para o template
+# funcionar igual num checkout Linux e num checkout Windows.
+#
+# O padrão é o git normalizar: LF dentro do repositório, e no checkout o fim de
+# linha que o sistema pedir (core.autocrlf). Os .tex, .sty e .md aguentam
+# qualquer um dos dois: o TeX e os scripts leem CRLF e LF do mesmo jeito.
+* text=auto
+
+# Scripts Python: LF sempre. Com CRLF, a primeira linha vira
+# "#!/usr/bin/env python3\r" e ./tarefas.py deixa de rodar no Linux e no macOS.
+*.py text eol=lf
+Makefile text eol=lf
+
+# O make.bat é o contrário: CRLF sempre, inclusive num checkout Linux. O cmd
+# interpreta mal .bat com fim de linha LF — rótulos e saltos falham de forma
+# intermitente, conforme a posição do texto no arquivo.
+*.bat text eol=crlf
+
+# Binários: nunca converter. As figuras em PDF de figuras/ são FONTE do pedido,
+# e um PDF sem byte nulo no começo pode ser tomado por texto pela detecção
+# automática — e corrompido na conversão de fim de linha.
+*.pdf binary
+*.docx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tif binary
+*.tiff binary
