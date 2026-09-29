@@ -20,7 +20,7 @@ IV e art. 39, IV da Portaria/INPI/DIRPA nº 14/2024) — por isso a lista é
 O trecho depois do travessão **não é enfeite**: é a declaração de quem abriu
 a imagem e conferiu que aquele sinal está desenhado ali. É a única informação
 do repositório que diz em que figura cada sinal aparece — nem o
-`verificar-conformidade.sh` nem o agente de IA enxergam o interior de um PDF
+`verificar-conformidade.py` nem o agente de IA enxergam o interior de um PDF
 de desenho. Sem ela, um sinal citado no relatório e desenhado em figura
 nenhuma passa despercebido até o INPI formular exigência.
 

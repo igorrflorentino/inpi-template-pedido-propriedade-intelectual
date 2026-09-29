@@ -9,13 +9,16 @@ name: Compilar LaTeX
 # exatamente os arquivos anexados no Peticionamento Eletrônico do INPI.
 #
 # O workflow também: (a) roda o chktex como lint advisory dos arquivos de prosa
-# (não bloqueia o build) e (b) gera o showcase dos dois eixos de seleção.
+# (não bloqueia o build), (b) gera o showcase dos dois eixos de seleção e a
+# cópia de comparação e (c) repete tudo no Windows, para provar que o template
+# funciona igual nos dois sistemas.
 #
-# CONTEXTO (importante para quem USA o template): o passo só-do-template — o
-# showcase de exemplos — roda APENAS neste repositório, via guarda
-# `if: github.repository == '<repo do template>'`. Em pedidos DERIVADOS do
-# template esse passo é pulado automaticamente; quem está escrevendo um pedido
-# real vê só lint + compilação das suas quatro peças + publicação dos PDFs.
+# CONTEXTO (importante para quem USA o template): os passos só-do-template — o
+# showcase, a cópia de comparação e o job inteiro do Windows — rodam APENAS
+# neste repositório, via guarda `if: github.repository == '<repo do
+# template>'`. Em pedidos DERIVADOS do template eles são pulados
+# automaticamente; quem está escrevendo um pedido real vê só lint + compilação
+# das suas quatro peças + conformidade + publicação dos PDFs.
 
 on:
   push:
@@ -43,6 +46,7 @@ jobs:
       # Ferramentas usadas pelos passos de lint e de conformidade (rodam no
       # host, fora do contêiner TeX Live): chktex (análise estática da prosa) e
       # poppler-utils (pdftotext/pdfimages/pdfinfo, para inspecionar os PDFs).
+      # O Python dos scripts já vem no runner.
       - name: Instalar ferramentas (lint + conformidade)
         run: sudo apt-get update -qq && sudo apt-get install -y -qq chktex poppler-utils
 
@@ -93,19 +97,20 @@ jobs:
       # pedidos escritos a partir do template. --check-only usa os PDFs que o
       # passo anterior gerou, sem recompilar.
       - name: Verificar conformidade normativa
-        run: bash verificar-conformidade.sh --check-only
+        run: python3 verificar-conformidade.py --check-only
 
       # Showcase (SÓ-DO-TEMPLATE): gera as quatro peças para cada combinação dos
       # dois eixos de seleção (natureza e modalidade), provando que os seletores
       # de dados-do-pedido.tex realmente chaveiam o que deveriam. Pulado em
-      # pedidos derivados do template. Veja gerar-exemplos.sh.
+      # pedidos derivados do template. Veja gerar-exemplos.py.
       # O script injeta valores por -pretex, o que a ação latex-action não sabe
-      # expressar; rodamos o script na mesma imagem TeX Live, diretamente.
+      # expressar; rodamos o script na mesma imagem TeX Live, diretamente (ela
+      # traz o python3).
       - name: Gerar o showcase dos eixos de seleção
         if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
         run: |
           docker run --rm -v "$PWD:/work" -w /work \
-            texlive/texlive:latest bash gerar-exemplos.sh
+            texlive/texlive:latest python3 gerar-exemplos.py
 
       - name: Publicar o showcase como artefato
         if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
@@ -124,7 +129,7 @@ jobs:
         if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
         run: |
           docker run --rm -v "$PWD:/work" -w /work \
-            texlive/texlive:latest bash gerar-copia-de-comparacao.sh
+            texlive/texlive:latest python3 gerar-copia-de-comparacao.py
 
       - name: Publicar a cópia de comparação como artefato
         if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
@@ -133,3 +138,95 @@ jobs:
           name: copia-de-comparacao-pdf
           path: '*-comparacao.pdf'
           if-no-files-found: error
+
+  # WINDOWS (SÓ-DO-TEMPLATE): o mesmo fluxo, do jeito que roda na máquina de
+  # quem escreve o pedido no Windows — pelo make.bat, no Prompt de Comando e no
+  # PowerShell, com o TeX Live e o poppler nativos e os arquivos de texto com
+  # fim de linha CRLF. Existe para que nenhuma mudança volte a amarrar o
+  # template ao Linux sem ninguém perceber: um sed, um caminho com barra, um
+  # acento na linha de comando. Pulado em pedidos derivados, onde só custaria
+  # minutos de CI (o minuto do Windows vale dois em repositório privado).
+  windows:
+    name: Compilar e verificar no Windows
+    if: github.repository == 'igorrflorentino/inpi-template-pedido-propriedade-intelectual'
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      # O padrão do instalador do Git for Windows: os .tex, .sty e .md chegam
+      # com CRLF, e só o que o .gitattributes fixa (os .py em LF, o make.bat em
+      # CRLF) escapa da conversão. É o caso que precisa ser provado.
+      - name: Fim de linha como no Git for Windows
+        run: git config --global core.autocrlf true
+
+      - name: Checkout do repositório
+        uses: actions/checkout@v6
+
+      # O mínimo para as quatro peças: o que o scheme-basic não traz e os
+      # pacotes, fontes e padrões de hifenização que o lib/inpitex.sty carrega.
+      - name: Instalar o TeX Live
+        uses: TeX-Live/setup-texlive-action@v4
+        with:
+          packages: |
+            scheme-basic
+            latexmk
+            chktex
+            babel-portuges
+            hyphen-portuguese
+            helvetic
+            ec
+            setspace
+            lastpage
+            enumitem
+            booktabs
+            ulem
+            etoolbox
+
+      # O build do poppler para Windows que o winget e o Scoop distribuem,
+      # baixado direto e conferido pelo SHA-256 publicado no manifesto do Scoop.
+      - name: Instalar o poppler (pdftotext, pdfinfo, pdfimages)
+        shell: pwsh
+        run: |
+          $versao = '26.09.0-0'
+          $zip = Join-Path $env:RUNNER_TEMP 'poppler.zip'
+          Invoke-WebRequest "https://github.com/oschwartz10612/poppler-windows/releases/download/v$versao/Release-$versao.zip" -OutFile $zip
+          $esperado = '7a6f256a0ddf7536182246a5733331bf4677cbcc34f4663774947ad34556c8d0'
+          if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne $esperado) { throw 'SHA-256 do poppler não confere' }
+          Expand-Archive $zip -DestinationPath $env:RUNNER_TEMP
+          Add-Content $env:GITHUB_PATH (Join-Path $env:RUNNER_TEMP "poppler-$($versao.Split('-')[0])\Library\bin")
+
+      # Um alvo por passo, digitado como o usuário digita: `make <alvo>` no
+      # Prompt de Comando encontra o make.bat da pasta atual.
+      - name: make pdf (Prompt de Comando)
+        shell: cmd
+        run: make pdf
+
+      - name: make verificar (Prompt de Comando)
+        shell: cmd
+        run: make verificar
+
+      - name: make comparacao (Prompt de Comando)
+        shell: cmd
+        run: make comparacao
+
+      # O showcase é o único caminho que injeta TeX pela linha de comando do
+      # latexmk, e é justamente o que o Windows trata de outro jeito.
+      - name: make exemplos (Prompt de Comando)
+        shell: cmd
+        run: make exemplos
+
+      - name: make lint (Prompt de Comando, advisory)
+        shell: cmd
+        continue-on-error: true
+        run: make lint
+
+      # No PowerShell o .\ é obrigatório: ele não executa arquivo da pasta atual
+      # pelo nome.
+      - name: .\make ajuda e .\make limpar (PowerShell)
+        shell: pwsh
+        run: |
+          .\make ajuda
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\make limpar
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $sobras = Get-ChildItem -Name *.pdf, *.aux, *.log, *.fls, *.fdb_latexmk
+          if ($sobras) { throw "make limpar deixou para trás: $sobras" }
